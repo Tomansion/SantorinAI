@@ -439,4 +439,3 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         # What a waste of time
         print(board)
         print(board.pawns[0])
-
