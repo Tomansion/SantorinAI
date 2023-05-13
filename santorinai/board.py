@@ -1,4 +1,4 @@
-from .pawn import pawn
+from santorinai.pawn import Pawn
 
 
 class Board:
@@ -25,7 +25,7 @@ class Board:
 
     """
 
-    def __init__(self, number_of_players):
+    def __init__(self, number_of_players: int):
         """
         Initializes a new instance of the Board class.
 
@@ -48,7 +48,7 @@ class Board:
 
         for pawn_number in range(1, self.nb_pawns + 1):
             player_number = (pawn_number - 1) % number_of_players + 1
-            self.pawns.append(pawn(pawn_number, player_number))
+            self.pawns.append(Pawn(pawn_number, player_number))
 
         # Initialize the board
         self.board_size = 5
@@ -68,7 +68,9 @@ class Board:
         self.winner_player_number = None
         self.turn_number = 1
 
-    def is_move_possible(self, start_pos, end_pos):
+    def is_move_possible(
+        self, start_pos: tuple[int, int], end_pos: tuple[int, int]
+    ) -> tuple[bool, str]:
         """
         Checks if a move from the start position to the end position is possible.
 
@@ -113,7 +115,7 @@ class Board:
 
         return True, "The move is possible."
 
-    def is_position_within_board(self, position):
+    def is_position_within_board(self, position: tuple[int, int]):
         """
         Checks if a position is within the bounds of the game board.
 
@@ -126,7 +128,9 @@ class Board:
         x, y = position
         return 0 <= x < self.board_size and 0 <= y < self.board_size
 
-    def is_position_adjacent(self, position1, position2):
+    def is_position_adjacent(
+        self, position1: tuple[int, int], position2: tuple[int, int]
+    ):
         """
         Checks if two positions are adjacent to each other.
 
@@ -141,7 +145,7 @@ class Board:
         x2, y2 = position2
         return abs(x1 - x2) <= 1 and abs(y1 - y2) <= 1 and (x1 != x2 or y1 != y2)
 
-    def is_pawn_on_position(self, position):
+    def is_pawn_on_position(self, position: tuple[int, int]):
         """
         Checks if a pawn is on a position.
 
@@ -156,7 +160,9 @@ class Board:
                 return True
         return False
 
-    def is_build_possible(self, builder_position, build_position):
+    def is_build_possible(
+        self, builder_position: tuple[int, int], build_position: tuple[int, int]
+    ):
         """
         Checks if a build from the builder position is possible.
 
@@ -203,7 +209,7 @@ class Board:
         """
         return self.pawns[self.pawn_turn - 1]
 
-    def get_possible_movement_positions(self, pawn):
+    def get_possible_movement_positions(self, pawn: Pawn):
         """
         Gets all the possible moves for a given pawn.
 
@@ -238,7 +244,7 @@ class Board:
 
         return possible_moves
 
-    def get_possible_building_positions(self, pawn):
+    def get_possible_building_positions(self, pawn: Pawn):
         """
         Gets all the possible builds for a given pawn, supposing it has already moved.
 
@@ -263,7 +269,7 @@ class Board:
 
         return possible_builds
 
-    def place_pawn(self, position):
+    def place_pawn(self, position: tuple[int, int]) -> tuple[bool, str]:
         """
         Places a pawn on the board.
 
@@ -301,7 +307,9 @@ class Board:
 
         return True, "The pawn was placed."
 
-    def play_move(self, move_vector, build_vector):
+    def play_move(
+        self, move_vector: tuple[int, int], build_vector: tuple[int, int]
+    ) -> tuple[bool, str]:
         """
         Plays a move on the board with the current playing pawn.
 
@@ -392,7 +400,7 @@ class Board:
 
         return True, "The move was played."
 
-    def is_vector_valid(self, vector):
+    def is_vector_valid(self, vector: tuple[int, int]):
         """
         Checks if a vector is valid.
 
@@ -463,7 +471,7 @@ class Board:
 
         self.turn_number += 1
 
-    def copy(self):
+    def copy(self) -> "Board":
         """
         Creates a copy of the board.
 

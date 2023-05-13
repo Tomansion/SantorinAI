@@ -1,4 +1,4 @@
-class pawn:
+class Pawn:
     def __init__(self, number, player_number):
         """
         Initialize a pawn
@@ -21,7 +21,7 @@ class pawn:
         Return a copy of the pawn
         :return: a copy of the pawn
         """
-        new_pawn = pawn(self.number, self.player_number)
+        new_pawn = Pawn(self.number, self.player_number)
         new_pawn.pos = self.pos
         return new_pawn
 
