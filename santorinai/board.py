@@ -35,6 +35,7 @@ class Board:
 
         # Create the pawns for each player
         self.pawns = []
+        self.nb_players = number_of_players
         self.nb_pawns = number_of_players * 2
 
         # For 2 player games:
