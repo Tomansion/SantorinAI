@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod, abstractproperty
+from typing import Tuple
 
 from santorinai.board import Board
 from santorinai.pawn import Pawn
+from typing import Tuple
 
 
 class Player:
@@ -17,7 +19,7 @@ class Player:
         pass
 
     @abstractmethod
-    def place_pawn(self, board: Board, pawn: Pawn) -> tuple[int, int]:
+    def place_pawn(self, board: Board, pawn: Pawn) -> Tuple[int, int]:
         """
         Place a pawn given a board
         :param board: the board
@@ -31,7 +33,7 @@ class Player:
     @abstractmethod
     def play_move(
         self, board: Board, pawn: Pawn
-    ) -> tuple[tuple[int, int], tuple[int, int]]:
+    ) -> tuple[Tuple[int, int], Tuple[int, int]]:
         """
         Play a move given a board
         :param board: the board
