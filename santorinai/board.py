@@ -71,7 +71,7 @@ class Board:
 
     def is_move_possible(
         self, start_pos: Tuple[int, int], end_pos: Tuple[int, int]
-    ) -> tuple[bool, str]:
+    ) -> Tuple[bool, str]:
         """
         Checks if a move from the start position to the end position is possible.
 
@@ -270,7 +270,7 @@ class Board:
 
         return possible_builds
 
-    def place_pawn(self, position: Tuple[int, int]) -> tuple[bool, str]:
+    def place_pawn(self, position: Tuple[int, int]) -> Tuple[bool, str]:
         """
         Places a pawn on the board.
 
@@ -310,7 +310,7 @@ class Board:
 
     def play_move(
         self, move_vector: Tuple[int, int], build_vector: Tuple[int, int]
-    ) -> tuple[bool, str]:
+    ) -> Tuple[bool, str]:
         """
         Plays a move on the board with the current playing pawn.
 

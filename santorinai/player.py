@@ -33,7 +33,7 @@ class Player:
     @abstractmethod
     def play_move(
         self, board: Board, pawn: Pawn
-    ) -> tuple[Tuple[int, int], Tuple[int, int]]:
+    ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
         """
         Play a move given a board
         :param board: the board
