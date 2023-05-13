@@ -1,4 +1,4 @@
-from .pound import Pound
+from .pawn import pawn
 
 
 class Board:
@@ -6,10 +6,10 @@ class Board:
     Represents the game board for the Santorini game.
 
     Attributes:
-        pounds (list): A list of Pound objects representing the pawns on the board.
+        pawns (list): A list of pawn objects representing the pawns on the board.
         board_size (int): The size of the square game board.
         board (list): A 2D list representing the current state of the board.
-        pound_turn (int): The index of the current player's turn.
+        pawn_turn (int): The index of the current player's turn.
         winner_player_number (int): The player number of the winning player, if any.
 
     Board values:
@@ -32,12 +32,24 @@ class Board:
         Args:
             number_of_players (int): The number of players in the game.
         """
-        self.pounds = []
-        for i in range(number_of_players):
-            self.pounds.append(
-                Pound(player_number=i + 1, pound_number=len(self.pounds) + 1)
-            )
 
+        # Create the pawns for each player
+        self.pawns = []
+
+        # For 2 player games:
+        # - Player 1 has pawns 1, 3
+        # - Player 2 has pawns 2, 4
+
+        # For 3 player games:
+        # - Player 1 has pawns 1, 4
+        # - Player 2 has pawns 2, 5
+        # - Player 3 has pawns 3, 6
+
+        for pawn_number in range(1, number_of_players * 2 + 1):
+            player_number = (pawn_number - 1) % number_of_players + 1
+            self.pawns.append(pawn(pawn_number, player_number))
+
+        # Initialize the board
         self.board_size = 5
         self.board = [
             [0 for _ in range(self.board_size)] for _ in range(self.board_size)
@@ -50,7 +62,8 @@ class Board:
         # 3 = tower level 3
         # 4 = terminated tower
 
-        self.pound_turn = 0
+        # Other board values:
+        self.pawn_turn = 1
         self.winner_player_number = None
 
     def is_move_possible(self, start_pos, end_pos):
@@ -83,7 +96,7 @@ class Board:
             return False, "It is not possible to move on a terminated tower."
 
         # Check if the end position is not to high
-        if end_level + 1 > start_level:
+        if end_level - start_level > 1:
             return False, "It is not possible to move two levels in one move."
 
         # Check if the end position is adjacent to the start position
@@ -91,11 +104,11 @@ class Board:
             return False, "It is not possible to move that far."
 
         # Check if the end position is not occupied by another pawn
-        for pound in self.pounds:
-            if pound.pos == end_pos:
+        for pawn in self.pawns:
+            if pawn.pos == end_pos:
                 return False, "It is not possible to move on another pawn."
 
-        return True
+        return True, "The move is possible."
 
     def is_position_within_board(self, position):
         """
@@ -124,3 +137,44 @@ class Board:
         x1, y1 = position1
         x2, y2 = position2
         return abs(x1 - x2) <= 1 and abs(y1 - y2) <= 1 and (x1 != x2 or y1 != y2)
+
+    def is_build_possible(self, builder_position, build_position):
+        """
+        Checks if a build from the builder position is possible.
+
+        Args:
+            builder_position (list): The position [x, y] of the builder pawn.
+            build_position (list): The position [x, y] of the build.
+
+        Returns:
+            bool: True if the build is possible, False otherwise.
+            str: A string describing why the build is not possible.
+        """
+        # Check if the builder position is within the board bounds
+        if not self.is_position_within_board(builder_position):
+            return False, "It is not possible to build from outside the board."
+
+        # Check if the build position is within the board bounds
+        if not self.is_position_within_board(build_position):
+            return False, "It is not possible to build outside the board."
+
+        # We can't build on the same position
+        if builder_position == build_position:
+            return False, "It is not possible to build where you are standing."
+
+        # Check if the build position is not terminated
+        if self.board[build_position[0]][build_position[1]] == 4:
+            return False, "It is not possible to build on a terminated tower."
+
+        # Check if the build position is adjacent to the builder position
+        if not self.is_position_adjacent(builder_position, build_position):
+            return False, "It is not possible to build that far."
+
+        # Check if the build position is not occupied by another pawn
+        for pawn in self.pawns:
+            print(pawn.pos, builder_position, build_position)
+            if pawn.pos == build_position:
+                print("Pawn pos:", pawn.pos)
+                return False, "It is not possible to build on another pawn."
+
+        return True, "The build is possible."
