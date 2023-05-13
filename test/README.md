@@ -5,7 +5,7 @@
 ### Install dependencies
 
 ```bash
-pip install unittest coverage
+pip install coverage
 ```
 
 ### Run tests
