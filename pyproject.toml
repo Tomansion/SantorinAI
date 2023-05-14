@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "SantorinAI"
-version = "1.0.0"
+version = "1.1.1"
 description = "A Python library that helps you create AI for the Santorini board game"
 readme = "README.md"
 authors = [{ name = "Tom Mansion", email = "tomansion@yahoo.fr" }]
