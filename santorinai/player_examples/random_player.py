@@ -21,6 +21,10 @@ class RandomPlayer(Player):
 
         # Get movement positions
         available_positions = board.get_possible_movement_positions(pawn)
+        if len(available_positions) == 0:
+            # The pawn cannot move
+            return None, None
+
         my_move_choice = choice(available_positions)
 
         # Simulate the move
