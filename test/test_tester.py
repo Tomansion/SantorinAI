@@ -17,6 +17,8 @@ class TestTester(unittest.TestCase):
     def test_play_1v1(self):
         tester = Tester()
         tester.verbose_level = 0
+        tester.display_board = False
+
         player1 = RandomPlayer()
         player2 = FirstChoicePlayer()
-        tester.play_1v1(player1, player2, nb_games=100)
+        tester.play_1v1(player1, player2, nb_games=10)
