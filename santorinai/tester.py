@@ -92,6 +92,7 @@ class Tester:
                 # Check if the player can move
                 if len(board.get_possible_movement_positions(current_pawn)) == 0:
                     self.display_message(f"   The pawn cannot move", 2)
+                    board.next_turn()
                     # We don't ask the player to move, we just skip his turn
                     continue
 
