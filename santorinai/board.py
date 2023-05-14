@@ -1,6 +1,7 @@
 from santorinai.pawn import Pawn
 from typing import Tuple
 
+
 class Board:
     """
     Represents the game board for the Santorini game.
