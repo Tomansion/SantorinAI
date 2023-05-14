@@ -11,6 +11,7 @@ class Board:
         board_size (int): The size of the square game board.
         board (list): A 2D list representing the current state of the board.
         pawn_turn (int): The index of the current player's turn.
+        turn_number (int): The current turn number.
         winner_player_number (int): The player number of the winning player, if any.
 
     Board values:
@@ -495,7 +496,7 @@ class Board:
             Board: A copy of the board.
         """
         # Create a new board
-        board_copy = Board(self.board_size)
+        board_copy = Board(self.nb_players)
 
         # Copy the board
         for x in range(self.board_size):
@@ -507,7 +508,7 @@ class Board:
 
         # Copy the other attributes
         board_copy.pawn_turn = self.pawn_turn
-        board_copy.turn = self.turn_number
+        board_copy.turn_number = self.turn_number
         board_copy.winner_player_number = self.winner_player_number
 
         return board_copy

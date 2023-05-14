@@ -14,24 +14,24 @@ if test -d "dist"; then
     rm -r dist
 fi
 
-# echo -e $CYAN"Build the package"$NC
-# python3 setup.py sdist bdist_wheel
+echo -e $CYAN"Build the package"$NC
+python3 setup.py sdist bdist_wheel
 
-# echo -e $CYAN"Save tar file"$NC
+echo -e $CYAN"Save tar file"$NC
 # mkdir build_package
 # mv dist/*.tar.gz build_package
 
-# echo -e $CYAN"Cleaning file"$NC
-# rm -r dist *.egg-info build
+echo -e $CYAN"Cleaning file"$NC
+rm -r *.egg-info build
 
 # echo -e $GREEN"Build is in build_package folder !"$NC
 # echo ""
 # echo "You can now run:"
 # echo "pip3 install build_package/*.tar.gz"
 
-python3 -m build     
+# python3 -m build     
 
-echo -e $GREEN"Build is in build_package folder !"$NC
+echo -e $GREEN"Build is in dist folder !"$NC
 echo ""
 echo "You can now run:"
 echo "pip3 install dist/*.tar.gz"
