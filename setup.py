@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="SantoriAI",
-    version="1.0.0",
+    version="1.1.0",
     author="Tom Mansion",
     author_email="tomansion@yahoo.fr",
     description="A Python library for the Santorini board game",
@@ -16,4 +16,5 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     python_requires=">=3.6",
+    install_requires=["pysimplegui"],
 )

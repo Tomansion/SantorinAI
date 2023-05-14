@@ -1,3 +1,6 @@
 __pycache__/
 .coverage
 htmlcov/
+build_package/
+dist/
+SantorinAI.egg-info/

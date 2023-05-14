@@ -5,6 +5,13 @@ AI Player tester for the Santorini game
 
 ## How to use
 ### 1. Install
+
+With pip:
+```bash
+pip install santorinai --upgrade
+```
+
+You can also clone the repository and install it manually:
 ```bash
 git clone https://github.com/Tomansion/SantorinAI.git
 cd SantorinAI
