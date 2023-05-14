@@ -334,11 +334,33 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         possible_moves = board.get_possible_movement_positions(board.get_playing_pawn())
         self.assertEqual(len(possible_moves), 1)
         self.assertEqual(possible_moves[0], (1, 1))
-        # Pawn 1 has only one possible build
+        # Pawn 1 has only one possible build from this position
         possible_moves = board.get_possible_building_positions(board.get_playing_pawn())
         self.assertEqual(len(possible_moves), 1)
         self.assertEqual(possible_moves[0], (1, 1))
-        print(board)
+
+        # Tests that a valid move with an invalid build is not allowed
+        # and that the pawn is not moved
+        move_ok, _ = board.play_move((1, 1), (0, 1))
+        self.assertFalse(move_ok)
+        self.assertEqual(board.pawn_turn, 1)
+        self.assertEqual(board.pawns[0].pos, (0, 0))
+        move_ok, _ = board.play_move((1, 1), (1, 1))
+        self.assertFalse(move_ok)
+        self.assertEqual(board.pawn_turn, 1)
+        self.assertEqual(board.pawns[0].pos, (0, 0))
+        move_ok, _ = board.play_move((1, 1), ("haha", "hoho"))
+        self.assertFalse(move_ok)
+        self.assertEqual(board.pawn_turn, 1)
+        self.assertEqual(board.pawns[0].pos, (0, 0))
+        move_ok, _ = board.play_move((1, 1), "test")
+        self.assertFalse(move_ok)
+        self.assertEqual(board.pawn_turn, 1)
+        self.assertEqual(board.pawns[0].pos, (0, 0))
+        move_ok, _ = board.play_move((1, 1), (2, 2, 2))
+        self.assertFalse(move_ok)
+        self.assertEqual(board.pawn_turn, 1)
+        self.assertEqual(board.pawns[0].pos, (0, 0))
 
         # Make every one stuck
         self.assertFalse(board.is_everyone_stuck())
@@ -441,3 +463,31 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         # What a waste of time
         print(board)
         print(board.pawns[0])
+
+    def test_get_possible_movement_and_building_positions(self):
+        board = Board(self.NB_PLAYERS)
+
+        # At first, all positions are free
+        all_possible_moves = board.get_possible_movement_and_building_positions(
+            board.get_playing_pawn()
+        )
+        self.assertEqual(len(all_possible_moves), 25)
+        board.place_pawn((2, 2))
+
+        # Pawn 1 has many possible moves
+        all_possible_moves = board.get_possible_movement_and_building_positions(
+            board.pawns[0]
+        )
+
+        print(all_possible_moves)
+        print(len(all_possible_moves))
+
+        self.assertGreater(len(all_possible_moves), 50)
+
+        # Pawn 2 has one less placement
+        all_possible_moves = board.get_possible_movement_and_building_positions(
+            board.get_playing_pawn()
+        )
+        self.assertEqual(len(all_possible_moves), 24)
+        board.place_pawn((3, 2))
+

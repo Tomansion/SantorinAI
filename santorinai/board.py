@@ -321,10 +321,6 @@ class Board:
         if not ok:
             return False, msg
 
-        # Check if the position is valid
-        if not self.is_position_within_board(position):
-            return False, "The position is not within the board bounds."
-
         # Check if the position is not occupied by another pawn
         if self.is_pawn_on_position(position):
             return False, "The position is already occupied by another pawn."
@@ -378,13 +374,13 @@ class Board:
             return False, reason
 
         # Check if the move is possible
-        initial_pos = pawn.pos
         move_possible, reason = self.is_move_possible(pawn.pos, move_position)
 
         if not move_possible:
             return False, reason
 
         # Apply the move
+        initial_pos = pawn.pos
         pawn.move(move_position)
 
         # Check if the tower is terminated
