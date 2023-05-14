@@ -92,7 +92,8 @@ class Tester:
                 # Check if the player can move
                 if len(board.get_possible_movement_positions(current_pawn)) == 0:
                     self.display_message(f"   The pawn cannot move", 2)
-                    break
+                    # We don't ask the player to move, we just skip his turn
+                    continue
 
                 board_copy = board.copy()
                 current_pawn_copy = board_copy.get_playing_pawn()

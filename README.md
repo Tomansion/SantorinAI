@@ -90,7 +90,7 @@ my_player = MyPlayer()
 random_payer = RandomPlayer()
 
 # Play 100 games
-tester.play_1v1(player1, player2, nb_games=100)
+tester.play_1v1(my_player, random_payer, nb_games=100)
 ```
 Output example:
 ```

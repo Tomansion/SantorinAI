@@ -461,8 +461,63 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         self.assertEqual(board.winner_player_number, 1)  # The last player who played
 
         # What a waste of time
-        print(board)
-        print(board.pawns[0])
+
+    def test_one_player_is_stuck(self):
+        board = Board(self.NB_PLAYERS)
+
+        # Board goal:
+        # _0 20 30 40 _0
+        # _0 _0 _0 _0 _0
+        # _0 _0 _0 _0 _0
+        # _4 _3 _0 _0 _0
+        # _1 12 _0 _0 _0
+
+        # ==== Pawns Positions ====
+        board.pawns[0].pos = (1, 0)
+        board.pawns[1].pos = (1, 4)
+        board.pawns[2].pos = (2, 4)
+        board.pawns[3].pos = (3, 4)
+
+        # ==== Constructions ====
+        board.board[0][0] = 1
+        board.board[1][0] = 2
+        board.board[0][1] = 4
+        board.board[1][1] = 3
+
+        # Player 1 get stuck
+        self.assertFalse(board.is_game_over())
+        self.assertFalse(board.is_everyone_stuck())
+        self.assertEqual(board.winner_player_number, None)
+
+        res = board.play_move((0, 0), (1, 0))
+        print(res)
+        self.assertTrue(res[0])
+        self.assertEqual(board.board[1][0], 3)
+
+        self.assertFalse(board.is_game_over())
+        self.assertFalse(board.is_everyone_stuck())
+        self.assertEqual(board.winner_player_number, None)
+
+        # Other players can still play
+        self.assertTrue(board.play_move((1, 3), (1, 2))[0])
+        self.assertTrue(board.play_move((2, 3), (2, 2))[0])
+        self.assertTrue(board.play_move((3, 3), (3, 2))[0])
+
+        self.assertFalse(board.is_game_over())
+        self.assertFalse(board.is_everyone_stuck())
+        self.assertEqual(board.winner_player_number, None)
+
+        p1 = board.get_playing_pawn()
+        self.assertEqual(p1.number, 1)
+        # Player 1 can't try to play
+        self.assertEqual(len(board.get_possible_movement_positions(p1)), 0)
+        self.assertEqual(len(board.get_possible_movement_and_building_positions(p1)), 0)
+        initial_pos = p1.pos
+        self.assertTrue(board.play_move((1, 0), (1, 1))[0])
+        self.assertEqual(p1.pos, initial_pos)
+        self.assertEqual(board.board[1][0], 3)
+
+        self.assertEqual(board.get_playing_pawn().number, 2)
 
     def test_get_possible_movement_and_building_positions(self):
         board = Board(self.NB_PLAYERS)
@@ -479,9 +534,6 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
             board.pawns[0]
         )
 
-        print(all_possible_moves)
-        print(len(all_possible_moves))
-
         self.assertGreater(len(all_possible_moves), 50)
 
         # Pawn 2 has one less placement
@@ -490,4 +542,3 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         )
         self.assertEqual(len(all_possible_moves), 24)
         board.place_pawn((3, 2))
-
