@@ -8,7 +8,7 @@ AI Player tester for the Santorini game
 
 With pip:
 ```bash
-pip install santorinai --upgrade
+pip install --upgrade santorinai
 ```
 
 You can also clone the repository and install it manually:
@@ -61,13 +61,13 @@ class MyPlayer(Player):
         return my_move_vector, my_build_vector
 ```
 
-Check our random players example in [our player examples folder](./player_examples/)  to help you create your own.
+Check our random players example in [our player examples folder](./santorinai/player_examples/)  to help you create your own.
 
 ### 3. Test your player
 
 ```python
 from santorinai.tester import Tester
-from player_examples.random_player import RandomPlayer
+from santorinai.player_examples.random_player import RandomPlayer
 from my_player import MyPlayer
 
 # Init the tester

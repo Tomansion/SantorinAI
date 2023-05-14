@@ -3,8 +3,8 @@
 import unittest
 
 from santorinai.tester import Tester
-from player_examples.random_player import RandomPlayer
-from player_examples.first_choice_player import FirstChoicePlayer
+from santorinai.player_examples.random_player import RandomPlayer
+from santorinai.player_examples.first_choice_player import FirstChoicePlayer
 
 
 class TestTester(unittest.TestCase):
