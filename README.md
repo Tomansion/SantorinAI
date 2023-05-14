@@ -131,8 +131,8 @@ board.copy() # Create a copy of the board, useful to test moves
 print(board) # Print the board
 ```
 
-
-
 ## Credits
 
-3D assets : https://www.thingiverse.com/sys_er26/designs
+Creator of Santorini: [Roxley Games](https://roxley.com/)
+
+Board 2D Gui library: [PySimpleGUI](https://www.pysimplegui.org/en/latest/)
