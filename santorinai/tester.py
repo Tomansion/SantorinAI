@@ -1,5 +1,6 @@
 from santorinai.player import Player
 from santorinai.board import Board
+from santorinai.board_displayer.board_displayer import init_window, update_board
 from time import sleep
 
 
@@ -9,6 +10,8 @@ class Tester:
     """
 
     verbose_level = 2
+    delay_between_moves = 0
+    display_board = True
 
     def display_message(self, message, verbose_level=1):
         """
@@ -41,6 +44,11 @@ class Tester:
 
         players = [player1, player2]
 
+        # Initialize the window
+        if self.display_board:
+            window = init_window([player1.name(), player2.name()])
+
+        # Play the games
         for game_nb in range(1, nb_games + 1):
             self.display_message(f"Game {game_nb}", 1)
 
@@ -71,6 +79,9 @@ class Tester:
                     break
 
                 self.display_message(f"   Pawn placed at position {position_choice}", 2)
+                if self.display_board:
+                    update_board(window, board)
+                sleep(self.delay_between_moves)
 
             # Play the game
             self.display_message(f"\nPlaying the game")
@@ -111,6 +122,9 @@ class Tester:
                     2,
                 )
                 self.display_message(board, 2)
+                if self.display_board:
+                    update_board(window, board)
+                sleep(self.delay_between_moves)
 
             # Game is over
             winer_number = board.winner_player_number

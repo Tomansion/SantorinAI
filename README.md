@@ -1,3 +1,5 @@
+![Graphical output example](./images/headban.png)
+
 # SantorinAI
 AI Player tester for the Santorini game
 
@@ -64,6 +66,8 @@ from my_player import MyPlayer
 # Init the tester
 tester = Tester()
 tester.verbose_level = 2 # 0: no output, 1: Each game results, 2: Each move summary
+tester.delay_between_moves = 0.1 # Delay between each move in seconds
+tester.display_board = True # Display a graphical view of the board in a window
 
 # Init the players
 my_player = MyPlayer()
@@ -78,6 +82,8 @@ Results:
 Player Randy Random won 10 times
 Player My player won 70 times
 ```
+Graphical output example:
+![Graphical output example](./images/board_image.png)
 
 ## Board utilities
 We provide some utilities to help you manipulate the board.
