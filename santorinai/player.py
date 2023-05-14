@@ -38,12 +38,12 @@ class Player:
         Play a move given a board
         :param board: the board
         :param pawn: the pawn that needs to be moved and that needs to build
-        :return: two vectors of the form (x1, y1), (x2, y2)
+        :return: two positions of the form (x1, y1), (x2, y2)
 
-        The first vector is the move of the pawn and the second vector is the
-        construction of a building relative to the new position of the pawn
+        The first coordinate corresponds to the new position of the pawn
+        The second coordinate corresponds to the position of the construction of the tower
 
-        Return example: (1, 0), (-1, 1) means that the player wants to move the pawn right one tile
-         and construct a building at the top left of his new position
+        Return example: (2, 2), (2, 3) means that the player wants to move the pawn at
+        at center of the board and build a tower at the top of his position
         """
         pass

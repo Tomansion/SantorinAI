@@ -264,7 +264,7 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         self.assertEqual(board.get_playing_pawn().player_number, 2)
 
         # Pawn 2 moves top and builds down
-        move_ok, _ = board.play_move((0, 1), (0, -1))
+        move_ok, _ = board.play_move((0, 2), (0, 1))
         self.assertTrue(move_ok)
         self.assertEqual(board.pawn_turn, 3)
         self.assertEqual(board.pawns[1].pos, (0, 2))
@@ -278,7 +278,7 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         # 0 0 0 0 0        1 3 _ _ _
 
         # Pawn 3 moves top left and builds down right
-        move_ok, _ = board.play_move((-1, 1), (1, -1))
+        move_ok, _ = board.play_move((0, 1), (1, 0))
         self.assertTrue(move_ok)
         self.assertEqual(board.pawn_turn, 4)
         self.assertEqual(board.pawns[2].pos, (0, 1))
@@ -291,8 +291,10 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         # 1 0 0 0 0        3 4 _ _ _
         # 0 1 0 0 0        1 _ _ _ _
 
-        # Pawn 4 moves try to move multiple times and fails
-        move_ok, _ = board.play_move((-1, 0), (1, -1))
+        # Pawn 4 moves tries to move top left but fails
+        move_ok, _ = board.play_move((0, 2), (0, 3))
+        self.assertFalse(move_ok)
+        move_ok, _ = board.play_move((0, 2), None)
         self.assertFalse(move_ok)
         self.assertEqual(board.pawn_turn, 4)
 
@@ -308,16 +310,16 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         self.assertEqual(board.pawn_turn, 4)
 
         # Pawn 4 moves down and try to build left but fails
-        move_ok, _ = board.play_move((0, -1), (-1, 0))
+        move_ok, _ = board.play_move((1, 0), (0, 0))
         self.assertFalse(move_ok)
         self.assertEqual(board.pawn_turn, 4)
         # The pawn is not moved:
         self.assertEqual(board.pawns[3].pos, (1, 1))
         # Pawn 4 try to play again but fails
-        self.assertFalse(board.place_pawn((1, 1))[0])
+        self.assertFalse(board.place_pawn((2, 2))[0])
 
         # Pawn 4 moves down and builds right
-        move_ok, _ = board.play_move((0, -1), (1, 0))
+        move_ok, _ = board.play_move((1, 0), (2, 0))
         self.assertTrue(move_ok)
         self.assertEqual(board.pawn_turn, 1)
 
@@ -373,24 +375,24 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         board.board[0][2] = 2
 
         # ==== First move====
-        self.assertTrue(board.play_move((0, -1), (0, -1))[0])
-        self.assertTrue(board.play_move((0, -1), (0, -1))[0])
-        self.assertTrue(board.play_move((0, -1), (0, -1))[0])
-        self.assertTrue(board.play_move((0, -1), (0, -1))[0])
+        self.assertTrue(board.play_move((0, 3), (0, 2))[0])
+        self.assertTrue(board.play_move((1, 3), (1, 4))[0])
+        self.assertTrue(board.play_move((2, 3), (2, 4))[0])
+        self.assertTrue(board.play_move((3, 3), (3, 4))[0])
 
         self.assertFalse(board.is_game_over())
         self.assertFalse(board.is_everyone_stuck())
         self.assertEqual(board.winner_player_number, None)
 
         # ==== Second and finish move ====
-        self.assertTrue(board.play_move((0, -1), (None, "Test"))[0])
+        self.assertTrue(board.play_move((0, 2), (None, "Test"))[0])
         self.assertTrue(board.is_game_over())
         self.assertEqual(board.winner_player_number, 1)
 
         self.assertFalse(board.is_everyone_stuck())
 
         # We can't play anymore
-        self.assertFalse(board.play_move((0, -1), (0, -1))[0])
+        self.assertFalse(board.play_move((2, 2), (2, 1))[0])
         self.assertFalse(board.place_pawn((2, 2))[0])
 
         # Congratulation to the winner!
@@ -430,7 +432,7 @@ class TestBoardTwoPlayersGame(unittest.TestCase):
         self.assertFalse(board.is_everyone_stuck())
         self.assertEqual(board.winner_player_number, None)
 
-        self.assertTrue(board.play_move((0, 1), (0, -1))[0])
+        self.assertTrue(board.play_move((0, 4), (0, 3))[0])
 
         self.assertTrue(board.is_game_over())
         self.assertTrue(board.is_everyone_stuck())

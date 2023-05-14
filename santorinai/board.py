@@ -202,7 +202,7 @@ class Board:
 
         return True, "The build is possible."
 
-    def get_playing_pawn(self):
+    def get_playing_pawn(self) -> Pawn:
         """
         Gets the pawn of the current player.
 
@@ -271,6 +271,32 @@ class Board:
 
         return possible_builds
 
+    def get_possible_movement_and_building_positions(self, pawn: Pawn):
+        """
+        Gets all the possible moves and builds for a given pawn.
+        :param pawn: The pawn for which to get the possible moves and builds.
+        :return: A list of all the possible moves and builds for the given pawn.
+        [(move_position, build_position), ...]
+        """
+
+        if pawn.pos == (None, None):
+            # Pawn not placed yet
+            possible_spawn_positions = self.get_possible_movement_positions(pawn)
+            return [(position, None) for position in possible_spawn_positions]
+
+        possible_moves = self.get_possible_movement_positions(pawn)
+
+        possible_moves_and_builds = []
+        original_position = pawn.pos
+        for move in possible_moves:
+            pawn.move(move)
+            possible_builds = self.get_possible_building_positions(pawn)
+            for build in possible_builds:
+                possible_moves_and_builds.append((move, build))
+
+        pawn.move(original_position)
+        return possible_moves_and_builds
+
     def place_pawn(self, position: Tuple[int, int]) -> Tuple[bool, str]:
         """
         Places a pawn on the board.
@@ -289,6 +315,11 @@ class Board:
         # Check if the pawn has already been placed
         if self.get_playing_pawn().pos != (None, None):
             return False, "The pawn has already been placed."
+
+        # Check input
+        ok, msg = self.is_position_valid(position)
+        if not ok:
+            return False, msg
 
         # Check if the position is valid
         if not self.is_position_within_board(position):
@@ -310,14 +341,14 @@ class Board:
         return True, "The pawn was placed."
 
     def play_move(
-        self, move_vector: Tuple[int, int], build_vector: Tuple[int, int]
+        self, move_position: Tuple[int, int], build_position: Tuple[int, int]
     ) -> Tuple[bool, str]:
         """
         Plays a move on the board with the current playing pawn.
 
         Args:
-            move_vector (tuple): The displacement vector [x, y] to apply to the pawn, (-1, 1) for example.
-            build_vector (tuple): The build vector [x, y] to apply to the pawn, (-1, 1) for example.
+            move_position (tuple): The position (x, y) to move the pawn to.
+            build_position (tuple): The position (x, y) to build a tower on.
 
         Returns:
             bool: True if the move was played, False otherwise.
@@ -334,31 +365,27 @@ class Board:
         if pawn.pos == (None, None):
             return False, "The pawn has not been placed yet."
 
-        # Check if their is any possible move
+        # Check if there is any possible move
         possible_moves = self.get_possible_movement_positions(pawn)
         if len(possible_moves) == 0:
             self.next_turn()
             return True, "There is no possible move to play, the pawn is stuck."
 
         # === MOVE ===
-        # Check if the vector is valid
-        disp_vector_valid, reason = self.is_vector_valid(move_vector)
-        if not disp_vector_valid:
+        # Check the input
+        position_valid, reason = self.is_position_valid(move_position)
+        if not position_valid:
             return False, reason
 
         # Check if the move is possible
         initial_pos = pawn.pos
-        new_pos = (
-            pawn.pos[0] + move_vector[0],
-            pawn.pos[1] + move_vector[1],
-        )
-        move_possible, reason = self.is_move_possible(pawn.pos, new_pos)
+        move_possible, reason = self.is_move_possible(pawn.pos, move_position)
 
         if not move_possible:
             return False, reason
 
         # Apply the move
-        pawn.move(new_pos)
+        pawn.move(move_position)
 
         # Check if the tower is terminated
         if self.board[pawn.pos[0]][pawn.pos[1]] == 3:
@@ -366,23 +393,18 @@ class Board:
             return True, "The move was played and the game is over."
 
         # === BUILD ===
-        # Check if the vector is valid
-        const_vector_valid, reason = self.is_vector_valid(build_vector)
-        if not const_vector_valid:
+        # Check the input
+        position_valid, reason = self.is_position_valid(build_position)
+        if not position_valid:
             # Reverse the move
             pawn.move(initial_pos)
             return False, reason
 
-        # Check if their is any possible build
-        # No need to check, it is always possible to build after a move
+        # Check if there is any possible build
+        # > No need to check, it is always possible to build after a move (we can always build on the initial position)
 
         # Check if the build is possible
-        build_pos = (
-            pawn.pos[0] + build_vector[0],
-            pawn.pos[1] + build_vector[1],
-        )
-
-        build_possible, reason = self.is_build_possible(pawn.pos, build_pos)
+        build_possible, reason = self.is_build_possible(pawn.pos, build_position)
 
         if not build_possible:
             # The move was played but the build is not possible
@@ -391,7 +413,7 @@ class Board:
             return False, reason
 
         # Build the tower
-        self.board[build_pos[0]][build_pos[1]] += 1
+        self.board[build_position[0]][build_position[1]] += 1
 
         if self.is_everyone_stuck():
             self.winner_player_number = pawn.player_number
@@ -402,40 +424,36 @@ class Board:
 
         return True, "The move was played."
 
-    def is_vector_valid(self, vector: Tuple[int, int]):
+    def is_position_valid(self, pos: Tuple[int, int]):
         """
-        Checks if a vector is valid.
+        Checks if a pos is valid.
 
         Args:
-            vector (tuple): The vector to check.
+            pos (tuple): The position to check.
 
         Returns:
-            bool: True if the vector is valid, False otherwise.
-            str: A string describing why the vector is not valid.
+            bool: True if the position is valid, False otherwise.
+            str: A string describing why the pos is not valid.
         """
 
-        # Check if the vector is a tuple
-        if not isinstance(vector, tuple):
-            return False, "The vector is not a tuple, but a {}.".format(type(vector))
+        # Check if the pos is a tuple
+        if not isinstance(pos, tuple):
+            return False, "The position is not a tuple, but a {}.".format(type(pos))
 
-        # Check if the vector is a 2D vector
-        if len(vector) != 2:
-            return False, "The vector is not a 2D vector, but a {}D vector.".format(
-                len(vector)
+        # Check if the pos is a 2D pos
+        if len(pos) != 2:
+            return False, "The position is not a coordinate, it but has {} dim.".format(
+                len(pos)
             )
 
-        # Check if the vector is a valid displacement vector
-        if not vector[0] in [-1, 0, 1] or not vector[1] in [-1, 0, 1]:
-            return (
-                False,
-                "The vector is not a valid displacement vector (" + str(vector) + ").",
-            )
+        if not isinstance(pos[0], int) or not isinstance(pos[1], int):
+            return False, "Not all the coordinates are integers: {}.".format(pos)
 
-        # The vector can't be a null vector
-        if vector == (0, 0):
-            return False, "The vector needs to go somewhere (0, 0)."
+        # Check if the pos is in the board bounds
+        if not self.is_position_within_board(pos):
+            return False, "The position is not within the board bounds."
 
-        return True, "The vector is valid."
+        return True, "The position is valid."
 
     def is_game_over(self):
         """
@@ -509,7 +527,7 @@ class Board:
 
         for y in range(self.board_size - 1, -1, -1):
             for x in range(self.board_size):
-                # Check if their is a pawn at this position
+                # Check if there is a pawn at this position
                 pawn = None
                 for p in self.pawns:
                     if p.pos == (x, y):

@@ -21,21 +21,11 @@ class FirstChoicePlayer(Player):
         available_positions = board.get_possible_movement_positions(pawn)
         my_move_choice = available_positions[0]
 
-        # Simulate the move
+        # Simulate the move (this will not impact the actual board)
         pawn.move(my_move_choice)
 
         # Get construction positions
         available_positions = board.get_possible_building_positions(pawn)
         my_build_choice = available_positions[0]
 
-        my_move_vector = (
-            my_move_choice[0] - my_initial_position[0],
-            my_move_choice[1] - my_initial_position[1],
-        )
-
-        my_build_vector = (
-            my_build_choice[0] - my_move_choice[0],
-            my_build_choice[1] - my_move_choice[1],
-        )
-
-        return my_move_vector, my_build_vector
+        return my_move_choice, my_build_choice

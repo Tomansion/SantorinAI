@@ -45,7 +45,7 @@ class MyPlayer(Player):
 
     # Movement and building
     def play_move(self, board, pawn):
-        my_initial_position = pawn.pos
+        my_pawn_pos = pawn.pos
 
         board_array = board.board # A 5x5 array of integers representing the board
         # 0: empty
@@ -54,11 +54,20 @@ class MyPlayer(Player):
         # 3: tower level 3
         # 4: terminated tower
 
-        # Do some magic here to choose a position
-        my_move_vector = (1, 1) # Moving top right
-        my_build_vector = (1, 0) # Building right (relative to the new position)
+        pawns = board.pawns # The other pawns on the board
 
-        return my_move_vector, my_build_vector
+        # Do some magic here to choose a position
+        my_move_position = ( # Moving top right
+            my_pawn_pos[0] + 1, 
+            my_pawn_pos[1] + 1
+        ) 
+
+        my_build_position = ( # Building right (relative to the new position)
+            my_move_position[0] + 1, 
+            my_move_position[1] + 0
+        ) 
+
+        return my_move_position, my_build_position
 ```
 
 Check our random players example in [our player examples folder](./santorinai/player_examples/)  to help you create your own.
@@ -125,10 +134,10 @@ available_build_positions = board.get_possible_building_positions(pawn)
 
 # Board control
 board.place_pawn(pos) # Place the current playing pawn on the board
-board.play_move(move_vector, build_vector) # Play a move (move and build) with the current playing pawn
+board.play_move(move_position, build_position) # Play a move (move and build) with the current playing pawn
 
 # Other
-board.is_vector_valid(vector)
+board.is_position_valid(position)
 board.is_move_possible(start_pos, end_pos)
 board.is_position_within_board(pos)
 board.is_position_adjacent(pos1, pos2)
@@ -136,6 +145,11 @@ board.is_pawn_on_position(pos)
 board.is_build_possible(builder_pos, build_pos)
 board.copy() # Create a copy of the board, useful to test moves
 print(board) # Print the board
+
+# Display
+from santorinai.board_displayer.board_displayer import init_window, update_board
+window = init_window([player1.name(), player2.name()])
+update_board(window, board)
 ```
 
 ## Credits
