@@ -138,5 +138,13 @@ class Tester:
 
         # Display the results
         print(f"\nResults:")
-        print(f"Player {players[0].name()} won {nb_victories[0]} times")
-        print(f"Player {players[1].name()} won {nb_victories[1]} times")
+        print(
+            f"Player {players[0].name()} won {nb_victories[0]} times ("
+            + str(round(nb_victories[0] / nb_games * 100, 2))
+            + "%)"
+        )
+        print(
+            f"Player {players[1].name()} won {nb_victories[1]} times ("
+            + str(round(nb_victories[1] / nb_games * 100, 2))
+            + "%)"
+        )
