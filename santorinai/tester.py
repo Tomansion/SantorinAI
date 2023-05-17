@@ -11,7 +11,7 @@ class Tester:
 
     verbose_level = 2
     delay_between_moves = 0
-    display_board = True
+    display_board = False
 
     def display_message(self, message, verbose_level=1):
         """
@@ -148,3 +148,8 @@ class Tester:
             + str(round(nb_victories[1] / nb_games * 100, 2))
             + "%)"
         )
+
+        return {
+            players[0].name(): nb_victories[0],
+            players[1].name(): nb_victories[1],
+        }
