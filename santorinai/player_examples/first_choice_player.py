@@ -18,8 +18,6 @@ class FirstChoicePlayer(Player):
 
     def play_move(self, board: Board, pawn: Pawn):
         # Get movement positions
-        print(pawn)
-        print(pawn.pos)
         available_move_positions = board.get_possible_movement_positions(pawn)
         if len(available_move_positions) == 0:
             # The pawn cannot move
@@ -34,9 +32,6 @@ class FirstChoicePlayer(Player):
         available_build_positions = board.get_possible_building_positions(pawn)
         if len(available_build_positions) == 0:
             # The pawn cannot build
-            print(available_move_positions)
-            print(available_build_positions)
-            print(board)
             raise Exception("Pawn cannot build")
 
         # Their is always at least one position available
