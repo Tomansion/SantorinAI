@@ -36,7 +36,7 @@ class Board:
         """
 
         # Create the pawns for each player
-        self.pawns: list[Pawn] = []
+        self.pawns: List[Pawn] = []
         self.nb_players = number_of_players
         self.nb_pawns = number_of_players * 2
 
@@ -250,7 +250,7 @@ class Board:
 
         return possible_moves
 
-    def get_possible_building_positions(self, pawn: Pawn) -> list[Tuple[int, int]]:
+    def get_possible_building_positions(self, pawn: Pawn) -> List[Tuple[int, int]]:
         """
         Gets all the possible builds for a given pawn, supposing it has already moved.
 
