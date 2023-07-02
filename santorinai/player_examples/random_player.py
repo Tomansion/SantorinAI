@@ -17,8 +17,6 @@ class RandomPlayer(Player):
         return my_choice
 
     def play_move(self, board, pawn):
-        my_initial_position = pawn.pos
-
         # Get movement positions
         available_positions = board.get_possible_movement_positions(pawn)
         if len(available_positions) == 0:

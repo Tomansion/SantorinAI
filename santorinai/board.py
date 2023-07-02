@@ -36,7 +36,7 @@ class Board:
         """
 
         # Create the pawns for each player
-        self.pawns = []
+        self.pawns: list[Pawn] = []
         self.nb_players = number_of_players
         self.nb_pawns = number_of_players * 2
 
@@ -212,7 +212,7 @@ class Board:
         """
         return self.pawns[self.pawn_turn - 1]
 
-    def get_possible_movement_positions(self, pawn: Pawn):
+    def get_possible_movement_positions(self, pawn: Pawn) -> list[Tuple[int, int]]:
         """
         Gets all the possible moves for a given pawn.
 
@@ -224,30 +224,33 @@ class Board:
         """
         possible_moves = []
 
-        # If pwan position is None, it means it has not been placed yet
+        # If pawn position is None, it means it has not been placed yet
         # Every position is possible except the ones occupied by other pawns
         # and the ones where tower are terminated
-        if pawn.pos == (None, None):
+        if pawn.pos[0] is None or pawn.pos[1] is None:
             for x in range(self.board_size):
                 for y in range(self.board_size):
                     if self.board[x][y] != 4 and not self.is_pawn_on_position((x, y)):
                         possible_moves.append((x, y))
             return possible_moves
 
-        # Get all the possible moves
+        # Get all the possible moves from the 8 positions around the pawn
         for x in range(-1, 2):
             for y in range(-1, 2):
+                # We can't move on the same position
                 if x == 0 and y == 0:
                     continue
-                move_possible, _ = self.is_move_possible(
-                    pawn.pos, (pawn.pos[0] + x, pawn.pos[1] + y)
-                )
+
+                new_pawn_pos = (pawn.pos[0] + x, pawn.pos[1] + y)
+
+                # Check if the move is possible
+                move_possible, _ = self.is_move_possible(pawn.pos, new_pawn_pos)
                 if move_possible:
                     possible_moves.append((pawn.pos[0] + x, pawn.pos[1] + y))
 
         return possible_moves
 
-    def get_possible_building_positions(self, pawn: Pawn):
+    def get_possible_building_positions(self, pawn: Pawn) -> list[Tuple[int, int]]:
         """
         Gets all the possible builds for a given pawn, supposing it has already moved.
 
@@ -257,6 +260,10 @@ class Board:
         Returns:
             list: A list of all the possible builds for the given pawn.
         """
+
+        if pawn.pos[0] is None or pawn.pos[1] is None:
+            return []
+
         possible_builds = []
 
         # Get all the possible builds
@@ -280,22 +287,24 @@ class Board:
         [(move_position, build_position), ...]
         """
 
-        if pawn.pos == (None, None):
+        if pawn.pos[0] is None or pawn.pos[1] is None:
             # Pawn not placed yet
             possible_spawn_positions = self.get_possible_movement_positions(pawn)
             return [(position, None) for position in possible_spawn_positions]
 
+        possible_moves_and_builds = []
+        original_position = (pawn.pos[0], pawn.pos[1])
         possible_moves = self.get_possible_movement_positions(pawn)
 
-        possible_moves_and_builds = []
-        original_position = pawn.pos
         for move in possible_moves:
             pawn.move(move)
             possible_builds = self.get_possible_building_positions(pawn)
             for build in possible_builds:
                 possible_moves_and_builds.append((move, build))
 
+        # Move the pawn back to its original position
         pawn.move(original_position)
+
         return possible_moves_and_builds
 
     def place_pawn(self, position: Tuple[int, int]) -> Tuple[bool, str]:
@@ -359,7 +368,7 @@ class Board:
         pawn = self.get_playing_pawn()
 
         # Check if the pawn has been placed
-        if pawn.pos == (None, None):
+        if pawn.pos[0] is None or pawn.pos[1] is None:
             return False, "The pawn has not been placed yet."
 
         # Check if there is any possible move
@@ -397,8 +406,8 @@ class Board:
             pawn.move(initial_pos)
             return False, reason
 
-        # Check if there is any possible build
-        # > No need to check, it is always possible to build after a move (we can always build on the initial position)
+        # No need to check possible build, it is always possible to build after a move
+        # (we can always build on the initial position)
 
         # Check if the build is possible
         build_possible, reason = self.is_build_possible(pawn.pos, build_position)

@@ -1,5 +1,4 @@
-from abc import ABC, abstractmethod, abstractproperty
-from typing import Tuple
+from abc import abstractmethod
 
 from santorinai.board import Board
 from santorinai.pawn import Pawn
@@ -11,7 +10,7 @@ class Player:
     A player of Santorini, has a name and can play a move given a board
     """
 
-    @abstractproperty
+    @abstractmethod
     def name(self):
         """
         The name of the player
@@ -26,7 +25,8 @@ class Player:
         :param pawn: the pawn that needs to be placed
         :return: a position of the form (x, y)
 
-        Return example: (2, 2) means that the player wants to place his pawn at the center of the board
+        Return example: (2, 2) means that the player wants to place
+        his pawn at the center of the board
         """
         pass
 
@@ -41,9 +41,10 @@ class Player:
         :return: two positions of the form (x1, y1), (x2, y2)
 
         The first coordinate corresponds to the new position of the pawn
-        The second coordinate corresponds to the position of the construction of the tower
+        The second coordinate corresponds to the position of the construction
+        of the tower
 
-        Return example: (2, 2), (2, 3) means that the player wants to move the pawn at
-        at center of the board and build a tower at the top of his position
+        Return example: (2, 2), (2, 3) means that the player wants to move the
+        pawn at center of the board and build a tower one tile above
         """
         pass

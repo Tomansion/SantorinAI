@@ -1,5 +1,6 @@
 from santorinai.player import Player
 from santorinai.board import Board
+from santorinai.pawn import Pawn
 from random import choice
 
 
@@ -23,7 +24,7 @@ class BasicPlayer(Player):
     def name(self):
         return "Extra BaThick!"
 
-    def get_ally_pawn(self, board, our_pawn):
+    def get_ally_pawn(self, board: Board, our_pawn: Pawn) -> Pawn | None:
         for pawn in board.pawns:
             if (
                 pawn.number != our_pawn.number
@@ -49,12 +50,17 @@ class BasicPlayer(Player):
 
     def place_pawn(self, board: Board, pawn):
         ally_pawn = self.get_ally_pawn(board, pawn)
-        available_positions = board.get_possible_movement_positions(pawn)
 
-        if ally_pawn.pos == (None, None):
+        available_positions = board.get_possible_movement_positions(pawn)
+        if (
+            ally_pawn is None
+            or ally_pawn.pos[0] is None
+            or ally_pawn.pos[1] is not None
+        ):
             # First pawn to place
             return choice(available_positions)
 
+        # Place second pawn next to the first one if possible
         for pos in available_positions:
             if board.is_position_adjacent(pos, ally_pawn.pos):
                 return pos
@@ -63,6 +69,10 @@ class BasicPlayer(Player):
 
     def play_move(self, board, pawn):
         available_positions = board.get_possible_movement_positions(pawn)
+
+        if pawn.pos[0] is None or pawn.pos[1] is None:
+            # Pawn is not placed yet
+            raise Exception("Pawn is not placed yet")
 
         current_level = board.board[pawn.pos[0]][pawn.pos[1]]
         best_spot = None

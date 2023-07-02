@@ -1,16 +1,20 @@
 from santorinai.player import Player
 from santorinai.board import Board
-from santorinai.board_displayer.board_displayer import init_window, update_board
+from santorinai.board_displayer.board_displayer import (
+    init_window,
+    update_board,
+    close_window,
+)
 from time import sleep
 
 
 class Tester:
     """
-    Run the games with SantorinAI playes, do statistics display the results
+    Run the games with SantorinAI players, do statistics display the results
     """
 
     verbose_level = 2
-    delay_between_moves = 0
+    delay_between_moves = 0.0
     display_board = False
 
     def display_message(self, message, verbose_level=1):
@@ -37,14 +41,15 @@ class Tester:
         nb_victories = [0, 0]
 
         # Check if the players are objects of the Player class
-        if not isinstance(player1, Player):
+        if player1 is None or not isinstance(player1, Player):
             raise TypeError("player1 should be an object of the Player class")
-        if not isinstance(player2, Player):
+        if player2 is None or not isinstance(player2, Player):
             raise TypeError("player2 should be an object of the Player class")
 
         players = [player1, player2]
 
         # Initialize the window
+        window = None
         if self.display_board:
             window = init_window([player1.name(), player2.name()])
 
@@ -60,8 +65,12 @@ class Tester:
                 board_copy = board.copy()
                 current_pawn = board_copy.get_playing_pawn()
 
+                # If pawn_nb == 1, the player_nb is 0, if pawn_nb == 2, the
+                # player_nb is 1, if pawn_nb == 3, the player_nb is 0, etc.
+                player_nb = (pawn_nb - 1) % NB_PLAYERS
+                player = players[player_nb]
+
                 # Ask the player where to place the pawn
-                player = players[pawn_nb % NB_PLAYERS]
                 self.display_message(
                     f"Player {player.name()} is placing pawn {pawn_nb}", 2
                 )
@@ -79,19 +88,19 @@ class Tester:
                     break
 
                 self.display_message(f"   Pawn placed at position {position_choice}", 2)
-                if self.display_board:
+                if self.display_board and window is not None:
                     update_board(window, board)
                 sleep(self.delay_between_moves)
 
             # Play the game
-            self.display_message(f"\nPlaying the game")
+            self.display_message("\nPlaying the game")
             while not board.is_game_over():
                 current_pawn = board.get_playing_pawn()
                 self.display_message(f"   Current pawn: {current_pawn}", 2)
 
                 # Check if the player can move
                 if len(board.get_possible_movement_positions(current_pawn)) == 0:
-                    self.display_message(f"   The pawn cannot move", 2)
+                    self.display_message("   The pawn cannot move", 2)
                     board.next_turn()
                     # We don't ask the player to move, we just skip his turn
                     continue
@@ -120,24 +129,27 @@ class Tester:
                     break
 
                 self.display_message(
-                    f"   Pawn moved at position {move_choice} and built at position {build_choice}",
+                    f"   Pawn moved at position {move_choice}\
+                      and built at position {build_choice}",
                     2,
                 )
                 self.display_message(board, 2)
-                if self.display_board:
+                if window and self.display_board:
                     update_board(window, board)
                 sleep(self.delay_between_moves)
 
             # Game is over
-            winer_number = board.winner_player_number
-            if winer_number is None:
+            winner_number = board.winner_player_number
+            if winner_number is None:
                 self.display_message("Draw")
             else:
-                self.display_message(f"Player {players[winer_number - 1].name()} wins!")
-                nb_victories[winer_number - 1] += 1
+                self.display_message(
+                    f"Player {players[winner_number - 1].name()} wins!"
+                )
+                nb_victories[winner_number - 1] += 1
 
         # Display the results
-        print(f"\nResults:")
+        print("\nResults:")
         print(
             f"Player {players[0].name()} won {nb_victories[0]} times ("
             + str(round(nb_victories[0] / nb_games * 100, 2))
@@ -148,6 +160,10 @@ class Tester:
             + str(round(nb_victories[1] / nb_games * 100, 2))
             + "%)"
         )
+
+        # Close the window
+        if self.display_board:
+            close_window(window)
 
         return {
             players[0].name(): nb_victories[0],

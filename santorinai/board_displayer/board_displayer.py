@@ -20,8 +20,6 @@ from santorinai.board import Board
 sg.theme("Dark Blue 3")
 SIZE = 5
 
-window = None
-
 pawns_colors = {
     1: "grey",
     2: "blue",
@@ -34,11 +32,6 @@ TILE_SIZE = SIZE_X / 5
 
 
 def init_window(player_names):
-    global window
-    if window is not None:
-        # window.close()
-        return window
-
     tile = player_names[0]
     for player_name in player_names[1:]:
         tile += f" VS {player_name} "
@@ -72,6 +65,9 @@ def draw_isometric_cube(
     :param line_color: The color of the cube's outline.
     """
     graph = window["-GRAPH-"]
+
+    if graph is None:
+        return
 
     ratio = SIZE_X / SIZE_Y
 
