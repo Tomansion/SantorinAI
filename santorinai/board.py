@@ -1,5 +1,5 @@
 from santorinai.pawn import Pawn
-from typing import Tuple
+from typing import Tuple, List
 
 
 class Board:
@@ -212,7 +212,7 @@ class Board:
         """
         return self.pawns[self.pawn_turn - 1]
 
-    def get_possible_movement_positions(self, pawn: Pawn) -> list[Tuple[int, int]]:
+    def get_possible_movement_positions(self, pawn: Pawn) -> List[Tuple[int, int]]:
         """
         Gets all the possible moves for a given pawn.
 
