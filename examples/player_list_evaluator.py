@@ -11,9 +11,10 @@ from santorinai.player_examples.basic_player import BasicPlayer
 # It will display a table with the results of each player against each other player.
 
 players_classes = [
+    BasicPlayer,
     RandomPlayer,
     FirstChoicePlayer,
-    BasicPlayer,
+
 ]
 
 # Init the tester
@@ -27,7 +28,7 @@ results = {}  # We will count the number of victories for each player
 # Match all combinations of players
 for i, player1_class in enumerate(players_classes):
     # Get the name of the player
-    player1_name = player1_class().name()
+    player1_name = player1_class(i).name()
     results[player1_name] = {}
 
     for j, player2_class in enumerate(players_classes):
@@ -35,8 +36,8 @@ for i, player1_class in enumerate(players_classes):
             continue
 
         # Init the players
-        p1 = player1_class()
-        p2 = player2_class()
+        p1 = player1_class(1)
+        p2 = player2_class(2)
 
         # Get the name of the player 2
         player2_name = p2.name()

@@ -61,18 +61,19 @@ class Tester:
             board = Board(NB_PLAYERS)
 
             # Placement the pawns
-            for pawn_nb in range(1, NB_PAWNS + 1):
+            # for pawn_nb in range(1, NB_PAWNS + 1):
+            for pawn_nb, current_pawn in enumerate(board.pawns):
                 board_copy = board.copy()
-                current_pawn = board_copy.get_playing_pawn()
+                # current_pawn = board_copy.get_playing_pawn()
 
                 # If pawn_nb == 1, the player_nb is 0, if pawn_nb == 2, the
                 # player_nb is 1, if pawn_nb == 3, the player_nb is 0, etc.
-                player_nb = (pawn_nb - 1) % NB_PLAYERS
+                player_nb = (pawn_nb) % NB_PLAYERS
                 player = players[player_nb]
 
                 # Ask the player where to place the pawn
                 self.display_message(
-                    f"Player {player.name()} is placing pawn {pawn_nb}", 2
+                    f"Player {player.name()} is placing pawn {pawn_nb + 1}", 2
                 )
                 position_choice = player.place_pawn(board_copy, current_pawn)
 
@@ -84,7 +85,7 @@ class Tester:
                         f"   Pawn placed at an invalid position: {reason}", 1
                     )
                     self.display_message(f"   Player {player.name()} loses")
-                    nb_victories[(pawn_nb + 1) % NB_PLAYERS] += 1
+                    nb_victories[(pawn_nb + 2) % NB_PLAYERS] += 1
                     break
 
                 self.display_message(f"   Pawn placed at position {position_choice}", 2)
@@ -95,37 +96,36 @@ class Tester:
             # Play the game
             self.display_message("\nPlaying the game")
             while not board.is_game_over():
-                current_pawn = board.get_playing_pawn()
-                self.display_message(f"   Current pawn: {current_pawn}", 2)
+                current_player = players[board.player_turn - 1]
+                # current_pawn = board.get_playing_pawn()
+                # self.display_message(f"   Current pawn: {current_pawn}", 2)
 
                 # Check if the player can move
-                if len(board.get_possible_movement_positions(current_pawn)) == 0:
-                    self.display_message("   The pawn cannot move", 2)
-                    board.next_turn()
-                    # We don't ask the player to move, we just skip his turn
-                    continue
+                # if len(board.get_possible_movement_positions(current_pawn)) == 0:
+                #     self.display_message("   The pawn cannot move", 2)
+                #     board.next_turn()
+                #     # We don't ask the player to move, we just skip his turn
+                #     continue
 
                 board_copy = board.copy()
-                current_pawn_copy = board_copy.get_playing_pawn()
+                # current_pawn_copy = board_copy.get_playing_pawn()
 
                 # Ask the player where to move the pawn
-                player = players[current_pawn.player_number - 1]
+                # player = players[current_pawn.player_number - 1]
                 self.display_message(
-                    f"Player {player.name()} is moving pawn {current_pawn.number}", 2
+                    f"Player {current_player.name()} is moving a pawn", 2
                 )
-                move_choice, build_choice = player.play_move(
-                    board_copy, current_pawn_copy
-                )
+                pawn_nb, move_choice, build_choice = current_player.play_move(board_copy)
 
                 # Move the pawn
-                success, reason = board.play_move(move_choice, build_choice)
+                success, reason = board.play_move(pawn_nb, move_choice, build_choice)
 
                 if not success:
                     self.display_message(
                         f"   Pawn moved at an invalid position: {reason}", 1
                     )
-                    self.display_message(f"   Player {player.name()} loses")
-                    nb_victories[(current_pawn.player_number) % NB_PLAYERS] += 1
+                    self.display_message(f"   Player {current_player.name()} loses")
+                    nb_victories[(current_player.player_number) % NB_PLAYERS] += 1
                     break
 
                 self.display_message(

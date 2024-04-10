@@ -70,6 +70,7 @@ class Board:
         self.pawn_turn = 1
         self.winner_player_number = None
         self.turn_number = 1
+        self.player_turn = 1
 
     def is_move_possible(
         self, start_pos: Tuple[int, int], end_pos: Tuple[int, int]
@@ -212,6 +213,20 @@ class Board:
         """
         return self.pawns[self.pawn_turn - 1]
 
+    def get_player_pawns(self, player_number: int) -> List[Pawn]:
+        """
+        Gets the pawn of the current player.
+
+        Returns:
+            Pawn: The pawn of the current player.
+        """
+        l_pawns = []
+        for pawn in self.pawns:
+            if pawn.player_number == player_number:
+                l_pawns.append(pawn)
+
+        return l_pawns
+
     def get_possible_movement_positions(self, pawn: Pawn) -> List[Tuple[int, int]]:
         """
         Gets all the possible moves for a given pawn.
@@ -347,10 +362,10 @@ class Board:
         return True, "The pawn was placed."
 
     def play_move(
-        self, move_position: Tuple[int, int], build_position: Tuple[int, int]
+        self, pawn_number:int, move_position: Tuple[int, int], build_position: Tuple[int, int]
     ) -> Tuple[bool, str]:
         """
-        Plays a move on the board with the current playing pawn.
+        Plays a move on the board with the chosen playing pawn.
 
         Args:
             move_position (tuple): The position (x, y) to move the pawn to.
@@ -360,12 +375,15 @@ class Board:
             bool: True if the move was played, False otherwise.
             str: A string describing why the move was not played.
         """
+        # Get the moving pawn
+        pawn = self.pawns[pawn_number - 1]
+
         # Check if the game is over
         if self.is_game_over():
             return False, "The game is over."
 
         # Get the pawn of the current player
-        pawn = self.get_playing_pawn()
+        # pawn = self.get_playing_pawn()
 
         # Check if the pawn has been placed
         if pawn.pos[0] is None or pawn.pos[1] is None:
@@ -492,8 +510,11 @@ class Board:
         Changes the turn.
         """
         self.pawn_turn += 1
-        if self.pawn_turn > self.nb_pawns:
-            self.pawn_turn = 1
+        # if self.pawn_turn > self.nb_pawns:
+        #     self.pawn_turn = 1
+        self.player_turn += 1
+        if self.player_turn > self.nb_players:
+            self.player_turn = 1
 
         self.turn_number += 1
 

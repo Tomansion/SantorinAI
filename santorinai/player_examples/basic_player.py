@@ -1,3 +1,4 @@
+import copy
 from santorinai.player import Player
 from santorinai.board import Board
 from santorinai.pawn import Pawn
@@ -17,9 +18,8 @@ class BasicPlayer(Player):
     :log_level: 0: no output, 1: Move choices
     """
 
-    def __init__(self, log_level=0) -> None:
-        super().__init__()
-        self.log_level = log_level
+    def __init__(self, player_number, log_level=0) -> None:
+        super().__init__(player_number, log_level)
 
     def name(self):
         return "Extra BaThick!"
@@ -67,41 +67,51 @@ class BasicPlayer(Player):
 
         return choice(available_positions)
 
-    def play_move(self, board, pawn):
-        available_positions = board.get_possible_movement_positions(pawn)
-
-        if pawn.pos[0] is None or pawn.pos[1] is None:
-            # Pawn is not placed yet
-            raise Exception("Pawn is not placed yet")
-
-        current_level = board.board[pawn.pos[0]][pawn.pos[1]]
+    def play_move(self, board):
+        available_pawns = []
         best_spot = None
+        best_spot_pawn_idx = None
         best_spot_level = 0
-        for pos in available_positions:
-            if board.board[pos[0]][pos[1]] == 3:
-                # We can win!
-                if self.log_level:
-                    print("Winning move")
-                return pos, (None, None)
 
-            pos_level = board.board[pos[0]][pos[1]]
-            if pos_level <= current_level + 1 and pos_level > best_spot_level:
-                # We can go up
-                best_spot = pos
-                best_spot_level = pos_level
+        # Iterate over available pawns
+        for idx, pawn in enumerate(board.get_player_pawns(self.player_number)):
+            # Simulate the move (Need to use pawn copy since returned pawn will be moved)
+            if pawn.pos[0] is None or pawn.pos[1] is None:
+                # Pawn is not placed yet
+                raise Exception("Pawn is not placed yet")
 
-        # Check if we can prevent the opponent from winning
-        enemy_pawns = self.get_enemy_pawns(board, pawn)
-        for enemy_pawn in enemy_pawns:
-            winning_moves = self.get_winning_moves(board, enemy_pawn)
-            for winning_move in winning_moves:
-                for available_pos in available_positions:
-                    if board.is_position_adjacent(winning_move, available_pos):
-                        # We can prevent the opponent from winning
-                        # Building on the winning move
-                        if self.log_level:
-                            print("Preventing opponent from winning")
-                        return available_pos, winning_move
+            available_pawns.append(pawn)
+            available_positions = board.get_possible_movement_positions(pawn)
+
+            current_level = board.board[pawn.pos[0]][pawn.pos[1]]
+            for pos in available_positions:
+                # Check if winning position available
+                if board.board[pos[0]][pos[1]] == 3:
+                    # We can win!
+                    if self.log_level:
+                        print("Winning move")
+                    return available_pawns[idx].number, pos, (None, None)
+
+                # Check if possible to go up
+                pos_level = board.board[pos[0]][pos[1]]
+                if pos_level <= current_level + 1 and pos_level > best_spot_level:
+                    # We can go up
+                    best_spot = pos
+                    best_spot_pawn_idx = idx
+                    best_spot_level = pos_level
+
+            # Check if we can prevent the opponent from winning
+            enemy_pawns = self.get_enemy_pawns(board, pawn)
+            for enemy_pawn in enemy_pawns:
+                winning_moves = self.get_winning_moves(board, enemy_pawn)
+                for winning_move in winning_moves:
+                    for available_pos in available_positions:
+                        if board.is_position_adjacent(winning_move, available_pos):
+                            # We can prevent the opponent from winning
+                            # Building on the winning move
+                            if self.log_level:
+                                print("Preventing opponent from winning")
+                            return available_pawns[idx].number, available_pos, winning_move
 
         # Move up if we can
         if best_spot:
@@ -109,10 +119,14 @@ class BasicPlayer(Player):
                 print("Moving up")
             pawn.move(best_spot)
             build_positions = board.get_possible_building_positions(pawn)
-            return best_spot, choice(build_positions)
+            if not build_positions:
+                pass
+            return available_pawns[best_spot_pawn_idx].number, best_spot, choice(build_positions)
 
         if self.log_level:
             print("Random move")
 
         # play randomly
-        return choice(board.get_possible_movement_and_building_positions(pawn))
+        pawn = choice(board.get_player_pawns(self.player_number))
+        t_move_build = choice(board.get_possible_movement_and_building_positions(pawn))
+        return (pawn.number,) + t_move_build
