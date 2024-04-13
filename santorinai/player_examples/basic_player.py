@@ -71,7 +71,7 @@ class BasicPlayer(Player):
         available_pawns = []
         best_spot = None
         best_spot_pawn_idx = None
-        best_spot_level = 0
+        best_spot_level = -2
 
         # Iterate over available pawns
         for idx, pawn in enumerate(board.get_player_pawns(self.player_number)):
@@ -93,7 +93,7 @@ class BasicPlayer(Player):
 
                 # Check if possible to go up
                 pos_level = board.board[pos[0]][pos[1]]
-                if pos_level <= current_level + 1 and pos_level > best_spot_level:
+                if pos_level <= current_level + 1 and pos_level > best_spot_level + current_level:
                     # We can go up
                     best_spot = pos
                     best_spot_pawn_idx = idx
