@@ -75,7 +75,6 @@ class BasicPlayer(Player):
 
         # Iterate over available pawns
         for idx, pawn in enumerate(board.get_player_pawns(self.player_number)):
-            # Simulate the move (Need to use pawn copy since returned pawn will be moved)
             if pawn.pos[0] is None or pawn.pos[1] is None:
                 # Pawn is not placed yet
                 raise Exception("Pawn is not placed yet")
@@ -117,16 +116,24 @@ class BasicPlayer(Player):
         if best_spot:
             if self.log_level:
                 print("Moving up")
-            pawn.move(best_spot)
-            build_positions = board.get_possible_building_positions(pawn)
-            if not build_positions:
-                pass
-            return available_pawns[best_spot_pawn_idx].number, best_spot, choice(build_positions)
+            best_pawn = available_pawns[best_spot_pawn_idx]
+            best_pawn.move(best_spot)
+            available_build_pos = board.get_possible_building_positions(best_pawn)
+            if available_build_pos:
+                build_choice = choice(available_build_pos)
+            else:
+                build_choice = None
+
+            return available_pawns[best_spot_pawn_idx].number, best_spot, build_choice
 
         if self.log_level:
             print("Random move")
 
         # play randomly
         pawn = choice(board.get_player_pawns(self.player_number))
-        t_move_build = choice(board.get_possible_movement_and_building_positions(pawn))
+        t_move_build = board.get_possible_movement_and_building_positions(pawn)
+        if t_move_build:
+            t_move_build = choice(t_move_build)
+        else:
+            t_move_build = (None,None)
         return (pawn.number,) + t_move_build
