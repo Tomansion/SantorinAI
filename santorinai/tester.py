@@ -27,7 +27,7 @@ class Tester:
         if self.verbose_level >= verbose_level:
             print(message)
 
-    def play_1v1(self, player1: Player, player2: Player, nb_games: int = 1):
+    def play_1v1(self, player1: Player, player2: Player, nb_games: int = 1, dic_win_lose_type=None):
         """
         Play a 1v1 game between player1 and player2
 
@@ -39,6 +39,10 @@ class Tester:
         NB_PAWNS = NB_PLAYERS * 2
 
         nb_victories = [0, 0]
+        # Initialize empty dic_win_lose_type in not passed
+        if not dic_win_lose_type:
+            dic_win_lose_type = {player1.name(): {},
+                                 player2.name(): {}}
 
         # Check if the players are objects of the Player class
         if player1 is None or not isinstance(player1, Player):
@@ -85,6 +89,9 @@ class Tester:
                         f"   Pawn placed at an invalid position: {reason}", 1
                     )
                     self.display_message(f"   Player {player.name()} loses")
+                    dic_win_lose_type[player.name()] = \
+                        register_new_victory_type(dic_win_lose_type[player.name()],
+                                                  f"   Pawn placed at an invalid position: {reason}")
                     nb_victories[(pawn_nb + 2) % NB_PLAYERS] += 1
                     break
 
@@ -125,6 +132,9 @@ class Tester:
                         f"   Pawn moved at an invalid position: {reason}", 1
                     )
                     self.display_message(f"   Player {current_player.name()} loses")
+                    dic_win_lose_type[current_player.name()] = \
+                        register_new_victory_type(dic_win_lose_type[current_player.name()],
+                                                  f"   Player {current_player.name()} loses")
                     nb_victories[(current_player.player_number) % NB_PLAYERS] += 1
                     break
 
@@ -146,7 +156,11 @@ class Tester:
                 self.display_message(
                     f"Player {players[winner_number - 1].name()} wins!"
                 )
-                nb_victories[winner_number - 1] += 1
+                dic_win_lose_type[players[winner_number - 1].name()] = \
+                    register_new_victory_type(dic_win_lose_type[players[winner_number - 1].name()],
+                                              f"Player {players[winner_number - 1].name()} wins!")
+
+            nb_victories[winner_number - 1] += 1
 
         # Display the results
         print("\nResults:")
@@ -168,4 +182,23 @@ class Tester:
         return {
             players[0].name(): nb_victories[0],
             players[1].name(): nb_victories[1],
-        }
+        }, dic_win_lose_type
+
+def register_new_victory_type(dic_win_lose_types, s_msg):
+    """
+    Function that registers types of winning and loosing conditions
+    and keeps track on a counter for each type of already registered
+    type
+    Args:
+        dic_win_lose_types:
+        s_msg:
+
+    Returns:
+
+    """
+    try:
+        dic_win_lose_types[s_msg] += 1
+    except KeyError:
+        dic_win_lose_types[s_msg] = 1
+
+    return dic_win_lose_types

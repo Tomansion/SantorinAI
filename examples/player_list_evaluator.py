@@ -25,6 +25,9 @@ tester.verbose_level = 0  # 0: no output, 1: Each game results, 2: Each move res
 nb_games = 1000
 results = {}  # We will count the number of victories for each player
 
+# Initialize global victory type evaluator
+dic_global_win_lose_type = {}
+
 # Match all combinations of players
 for i, player1_class in enumerate(players_classes):
     # Get the name of the player
@@ -39,6 +42,9 @@ for i, player1_class in enumerate(players_classes):
         p1 = player1_class(1)
         p2 = player2_class(2)
 
+        # Initialize victory type evaluator dic
+        dic_win_lose_type = {p1.name(): {}, p2.name(): {}}
+
         # Get the name of the player 2
         player2_name = p2.name()
         results[player1_name][player2_name] = 0
@@ -46,9 +52,12 @@ for i, player1_class in enumerate(players_classes):
         print(f"\n\nPlaying {player1_name} vs {player2_name}:")
 
         # Play 100 games
-        victories_number = tester.play_1v1(p1, p2, nb_games=nb_games)
+        victories_number,  dic_global_win_lose_type[f"{p1.name()}vs{p2.name()}"] = \
+            tester.play_1v1(p1, p2, nb_games=nb_games, dic_win_lose_type=dic_win_lose_type)
+
         results[player1_name][player2_name] = victories_number[player1_name]
 
+print(f"dic_global_win_lose_type = \n{dic_global_win_lose_type}")
 
 print()
 print("Results:")
