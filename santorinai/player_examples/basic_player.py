@@ -2,6 +2,7 @@ from santorinai.player import Player
 from santorinai.board import Board
 from santorinai.pawn import Pawn
 from random import choice
+from typing import Tuple
 
 
 class BasicPlayer(Player):
@@ -23,7 +24,7 @@ class BasicPlayer(Player):
     def name(self):
         return "Extra BaThick!"
 
-    def get_ally_pawn(self, board: Board, our_pawn: Pawn) -> Pawn | None:
+    def get_ally_pawn(self, board: Board, our_pawn: Pawn) -> Tuple[Pawn, None]:
         for pawn in board.pawns:
             if (
                 pawn.number != our_pawn.number
