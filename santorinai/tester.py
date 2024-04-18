@@ -202,12 +202,14 @@ class Tester:
         # Display the results
         print("\nResults:")
         print(
-            f"Player {players[0].name()} won {nb_victories[players[0].name()]} time{'s' if nb_victories[players[0].name()] != 1 else ''} ("
+            f"Player {players[0].name()} won {nb_victories[players[0].name()]}\
+ time{'s' if nb_victories[players[0].name()] != 1 else ''} ("
             + str(round(nb_victories[players[0].name()] / nb_games * 100, 2))
             + "%)"
         )
         print(
-            f"Player {players[1].name()} won {nb_victories[players[1].name()]} time{'s' if nb_victories[players[1].name()] != 1 else ''} ("
+            f"Player {players[1].name()} won {nb_victories[players[1].name()]}\
+ time{'s' if nb_victories[players[1].name()] != 1 else ''} ("
             + str(round(nb_victories[players[1].name()] / nb_games * 100, 2))
             + "%)"
         )
