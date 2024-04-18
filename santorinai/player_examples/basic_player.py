@@ -88,7 +88,7 @@ class BasicPlayer(Player):
                     # We can win!
                     if self.log_level:
                         print("Winning move")
-                    return available_pawns[idx].number, pos, (None, None)
+                    return available_pawns[idx].order, pos, (None, None)
 
                 # Check if possible to go up
                 pos_level = board.board[pos[0]][pos[1]]
@@ -113,7 +113,7 @@ class BasicPlayer(Player):
                             if self.log_level:
                                 print("Preventing opponent from winning")
                             return (
-                                available_pawns[idx].number,
+                                available_pawns[idx].order,
                                 available_pos,
                                 winning_move,
                             )
@@ -130,7 +130,7 @@ class BasicPlayer(Player):
             else:
                 build_choice = None
 
-            return available_pawns[best_spot_pawn_idx].number, best_spot, build_choice
+            return available_pawns[best_spot_pawn_idx].order, best_spot, build_choice
 
         if self.log_level:
             print("Random move")
@@ -142,4 +142,4 @@ class BasicPlayer(Player):
             t_move_build = choice(t_move_build)
         else:
             t_move_build = (None, None)
-        return (pawn.number,) + t_move_build
+        return (pawn.order,) + t_move_build

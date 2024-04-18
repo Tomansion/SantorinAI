@@ -40,6 +40,10 @@ class Tester:
         Args:
             player1 (Player): the first player
             player2 (Player): the second player
+
+        Returns:
+            dict: the number of victories for each player
+            dict: the different types of winning and loosing conditions
         """
         NB_PLAYERS = 2
 
@@ -49,7 +53,24 @@ class Tester:
         if player2 is None or not isinstance(player2, Player):
             raise TypeError("player2 should be an object of the Player class")
 
-        nb_victories = [0, 0]
+        # Validate the names of the players
+        player_names = [player1.name(), player2.name()]
+
+        if type(player_names[0]) is not str or len(player_names[0]) == 0:
+            raise ValueError("player1 should have a valid name")
+
+        if type(player_names[1]) is not str or len(player_names[1]) == 0:
+            raise ValueError("player2 should have a valid name")
+
+        if player_names[0] == player_names[1]:
+            raise ValueError("The players should have different names")
+
+        # Initialize the number of victories
+        nb_victories = {
+            player1.name(): 0,
+            player2.name(): 0,
+        }
+
         # Initialize empty dic_win_lose_type in not passed
         if not dic_win_lose_type:
             dic_win_lose_type = {player1.name(): {}, player2.name(): {}}
@@ -69,11 +90,8 @@ class Tester:
             board = Board(NB_PLAYERS)
 
             # Placement the pawns
-            # for pawn_nb in range(1, NB_PAWNS + 1):
             for pawn_nb, current_pawn in enumerate(board.pawns):
                 board_copy = board.copy()
-                # current_pawn = board_copy.get_playing_pawn()
-
                 # If pawn_nb == 1, the player_nb is 0, if pawn_nb == 2, the
                 # player_nb is 1, if pawn_nb == 3, the player_nb is 0, etc.
                 player_nb = (pawn_nb) % NB_PLAYERS
@@ -81,7 +99,7 @@ class Tester:
 
                 # Ask the player where to place the pawn
                 self.display_message(
-                    f"Player {player.name()} is placing pawn {pawn_nb + 1}", 2
+                    f"Player '{player.name()}' is placing pawn {pawn_nb + 1}", 2
                 )
                 position_choice = player.place_pawn(board_copy, current_pawn)
 
@@ -92,12 +110,12 @@ class Tester:
                     self.display_message(
                         f"   Pawn placed at an invalid position: {reason}", 1
                     )
-                    self.display_message(f"   Player {player.name()} loses")
+                    self.display_message(f"   Player '{player.name()}' loses")
                     dic_win_lose_type[player.name()] = register_new_victory_type(
                         dic_win_lose_type[player.name()],
-                        f"   Pawn placed at an invalid position: {reason}",
+                        f"Pawn placed at an invalid position: {reason}",
                     )
-                    nb_victories[(pawn_nb + 2) % NB_PLAYERS] += 1
+                    nb_victories[player_names[(player_nb + 1) % NB_PLAYERS]] += 1
                     break
 
                 self.display_message(f"   Pawn placed at position {position_choice}", 2)
@@ -125,7 +143,7 @@ class Tester:
                 # Ask the player where to move the pawn
                 # player = players[current_pawn.player_number - 1]
                 self.display_message(
-                    f"Player {current_player.name()} is moving a pawn", 2
+                    f"Player '{current_player.name()}' is moving a pawn", 2
                 )
                 pawn_nb, move_choice, build_choice = current_player.play_move(
                     board_copy
@@ -138,53 +156,59 @@ class Tester:
                     self.display_message(
                         f"   Pawn moved at an invalid position: {reason}", 1
                     )
-                    self.display_message(f"   Player {current_player.name()} loses")
+                    self.display_message(f"   Player '{current_player.name()}' loses")
                     dic_win_lose_type[current_player.name()] = (
                         register_new_victory_type(
-                            dic_win_lose_type[current_player.name()],
-                            f"   Player {current_player.name()} loses",
+                            dic_win_lose_type[current_player.name()], reason
                         )
                     )
-                    nb_victories[(current_player.player_number) % NB_PLAYERS] += 1
+
+                    other_player_name_id = (board.player_turn - 1) % NB_PLAYERS
+                    other_player_name = player_names[other_player_name_id]
+                    nb_victories[other_player_name] += 1
+
                     break
 
+                # Log the move details
                 self.display_message(
                     f"   Pawn moved at position {move_choice}\
                       and built at position {build_choice}",
                     2,
                 )
                 self.display_message(board, 2)
+
+                # Update the board display
                 if window and self.display_board:
                     update_board(window, board)
-                sleep(self.delay_between_moves)
+
+                    # Sleep between moves
+                    if self.delay_between_moves > 0:
+                        sleep(self.delay_between_moves)
 
             # Game is over
             winner_number = board.winner_player_number
             if winner_number is None:
                 self.display_message("Draw")
             else:
-                self.display_message(
-                    f"Player {players[winner_number - 1].name()} wins!"
-                )
-                dic_win_lose_type[players[winner_number - 1].name()] = (
-                    register_new_victory_type(
-                        dic_win_lose_type[players[winner_number - 1].name()],
-                        f"Player {players[winner_number - 1].name()} wins!",
-                    )
+                winner_player_name = players[winner_number - 1].name()
+                self.display_message(f"Player '{winner_player_name}' wins!")
+                dic_win_lose_type[winner_player_name] = register_new_victory_type(
+                    dic_win_lose_type[winner_player_name],
+                    reason,
                 )
 
-                nb_victories[winner_number - 1] += 1
+                nb_victories[winner_player_name] += 1
 
         # Display the results
         print("\nResults:")
         print(
-            f"Player {players[0].name()} won {nb_victories[0]} times ("
-            + str(round(nb_victories[0] / nb_games * 100, 2))
+            f"Player {players[0].name()} won {nb_victories[players[0].name()]} time{'s' if nb_victories[players[0].name()] != 1 else ''} ("
+            + str(round(nb_victories[players[0].name()] / nb_games * 100, 2))
             + "%)"
         )
         print(
-            f"Player {players[1].name()} won {nb_victories[1]} times ("
-            + str(round(nb_victories[1] / nb_games * 100, 2))
+            f"Player {players[1].name()} won {nb_victories[players[1].name()]} time{'s' if nb_victories[players[1].name()] != 1 else ''} ("
+            + str(round(nb_victories[players[1].name()] / nb_games * 100, 2))
             + "%)"
         )
 
@@ -192,10 +216,7 @@ class Tester:
         if self.display_board:
             close_window(window)
 
-        return {
-            players[0].name(): nb_victories[0],
-            players[1].name(): nb_victories[1],
-        }, dic_win_lose_type
+        return nb_victories, dic_win_lose_type
 
 
 def register_new_victory_type(dic_win_lose_types, s_msg):

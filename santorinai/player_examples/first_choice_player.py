@@ -28,7 +28,7 @@ class FirstChoicePlayer(Player):
         available_move_positions = board.get_possible_movement_positions(pawn)
         if len(available_move_positions) == 0:
             # The pawn cannot move
-            return pawn.number, None, None
+            return pawn.order, None, None
 
         my_move_choice = available_move_positions[0]
 
@@ -44,4 +44,4 @@ class FirstChoicePlayer(Player):
         # Their is always at least one position available
         my_build_choice = available_build_positions[0]
 
-        return pawn.number, my_move_choice, my_build_choice
+        return pawn.order, my_move_choice, my_build_choice

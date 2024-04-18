@@ -50,7 +50,8 @@ class Board:
 
         for pawn_number in range(1, self.nb_pawns + 1):
             player_number = (pawn_number - 1) % number_of_players + 1
-            self.pawns.append(Pawn(pawn_number, player_number))
+            pawn_order = (pawn_number - 1) // number_of_players + 1  # 1 or 2
+            self.pawns.append(Pawn(pawn_number, pawn_order, player_number))
 
         # Initialize the board
         self.board_size = 5
@@ -420,6 +421,9 @@ class Board:
         """
 
         # Validate the input
+        if not isinstance(pawn_number, int):
+            return False, "The pawn number is not an integer."
+
         if pawn_number < 1 or pawn_number > 2:
             return False, "The pawn number is invalid (must be 1 or 2)."
 
@@ -459,7 +463,7 @@ class Board:
         # Check if the tower is terminated
         if self.board[pawn.pos[0]][pawn.pos[1]] == 3:
             self.winner_player_number = pawn.player_number
-            return True, "The move was played and the game is over."
+            return True, "The player pawn reached the top of a tower."
 
         # === BUILD ===
         # Check the input
@@ -490,6 +494,18 @@ class Board:
 
         # Change the turn
         self.next_turn()
+
+        # Check if the next player is stuck
+        next_player_pawns = self.get_player_pawns(self.player_turn)
+        next_player_stuck = True
+        for p in next_player_pawns:
+            if len(self.get_possible_movement_positions(p)) > 0:
+                next_player_stuck = False
+                break
+
+        if next_player_stuck:
+            self.winner_player_number = pawn.player_number
+            return True, "The next player is stuck, the game is over."
 
         return True, "The move was played."
 
