@@ -27,7 +27,13 @@ class Tester:
         if self.verbose_level >= verbose_level:
             print(message)
 
-    def play_1v1(self, player1: Player, player2: Player, nb_games: int = 1, dic_win_lose_type=None):
+    def play_1v1(
+        self,
+        player1: Player,
+        player2: Player,
+        nb_games: int = 1,
+        dic_win_lose_type=None,
+    ):
         """
         Play a 1v1 game between player1 and player2
 
@@ -41,8 +47,7 @@ class Tester:
         nb_victories = [0, 0]
         # Initialize empty dic_win_lose_type in not passed
         if not dic_win_lose_type:
-            dic_win_lose_type = {player1.name(): {},
-                                 player2.name(): {}}
+            dic_win_lose_type = {player1.name(): {}, player2.name(): {}}
 
         # Check if the players are objects of the Player class
         if player1 is None or not isinstance(player1, Player):
@@ -89,9 +94,10 @@ class Tester:
                         f"   Pawn placed at an invalid position: {reason}", 1
                     )
                     self.display_message(f"   Player {player.name()} loses")
-                    dic_win_lose_type[player.name()] = \
-                        register_new_victory_type(dic_win_lose_type[player.name()],
-                                                  f"   Pawn placed at an invalid position: {reason}")
+                    dic_win_lose_type[player.name()] = register_new_victory_type(
+                        dic_win_lose_type[player.name()],
+                        f"   Pawn placed at an invalid position: {reason}",
+                    )
                     nb_victories[(pawn_nb + 2) % NB_PLAYERS] += 1
                     break
 
@@ -122,7 +128,9 @@ class Tester:
                 self.display_message(
                     f"Player {current_player.name()} is moving a pawn", 2
                 )
-                pawn_nb, move_choice, build_choice = current_player.play_move(board_copy)
+                pawn_nb, move_choice, build_choice = current_player.play_move(
+                    board_copy
+                )
 
                 # Move the pawn
                 success, reason = board.play_move(pawn_nb, move_choice, build_choice)
@@ -132,9 +140,12 @@ class Tester:
                         f"   Pawn moved at an invalid position: {reason}", 1
                     )
                     self.display_message(f"   Player {current_player.name()} loses")
-                    dic_win_lose_type[current_player.name()] = \
-                        register_new_victory_type(dic_win_lose_type[current_player.name()],
-                                                  f"   Player {current_player.name()} loses")
+                    dic_win_lose_type[current_player.name()] = (
+                        register_new_victory_type(
+                            dic_win_lose_type[current_player.name()],
+                            f"   Player {current_player.name()} loses",
+                        )
+                    )
                     nb_victories[(current_player.player_number) % NB_PLAYERS] += 1
                     break
 
@@ -156,9 +167,12 @@ class Tester:
                 self.display_message(
                     f"Player {players[winner_number - 1].name()} wins!"
                 )
-                dic_win_lose_type[players[winner_number - 1].name()] = \
-                    register_new_victory_type(dic_win_lose_type[players[winner_number - 1].name()],
-                                              f"Player {players[winner_number - 1].name()} wins!")
+                dic_win_lose_type[players[winner_number - 1].name()] = (
+                    register_new_victory_type(
+                        dic_win_lose_type[players[winner_number - 1].name()],
+                        f"Player {players[winner_number - 1].name()} wins!",
+                    )
+                )
 
             nb_victories[winner_number - 1] += 1
 
@@ -183,6 +197,7 @@ class Tester:
             players[0].name(): nb_victories[0],
             players[1].name(): nb_victories[1],
         }, dic_win_lose_type
+
 
 def register_new_victory_type(dic_win_lose_types, s_msg):
     """

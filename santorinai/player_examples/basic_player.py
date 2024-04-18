@@ -93,7 +93,10 @@ class BasicPlayer(Player):
 
                 # Check if possible to go up
                 pos_level = board.board[pos[0]][pos[1]]
-                if pos_level <= current_level + 1 and pos_level > best_spot_level + current_level:
+                if (
+                    pos_level <= current_level + 1
+                    and pos_level > best_spot_level + current_level
+                ):
                     # We can go up
                     best_spot = pos
                     best_spot_pawn_idx = idx
@@ -110,7 +113,11 @@ class BasicPlayer(Player):
                             # Building on the winning move
                             if self.log_level:
                                 print("Preventing opponent from winning")
-                            return available_pawns[idx].number, available_pos, winning_move
+                            return (
+                                available_pawns[idx].number,
+                                available_pos,
+                                winning_move,
+                            )
 
         # Move up if we can
         if best_spot:
@@ -135,5 +142,5 @@ class BasicPlayer(Player):
         if t_move_build:
             t_move_build = choice(t_move_build)
         else:
-            t_move_build = (None,None)
+            t_move_build = (None, None)
         return (pawn.number,) + t_move_build

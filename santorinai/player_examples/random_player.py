@@ -6,6 +6,7 @@ class RandomPlayer(Player):
     """
     A player that places his pawns and moves them randomly
     """
+
     def __init__(self, player_number, log_level=0) -> None:
         super().__init__(player_number, log_level)
 

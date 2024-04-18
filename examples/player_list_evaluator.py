@@ -14,7 +14,6 @@ players_classes = [
     BasicPlayer,
     RandomPlayer,
     FirstChoicePlayer,
-
 ]
 
 # Init the tester
@@ -52,8 +51,11 @@ for i, player1_class in enumerate(players_classes):
         print(f"\n\nPlaying {player1_name} vs {player2_name}:")
 
         # Play 100 games
-        victories_number,  dic_global_win_lose_type[f"{p1.name()}vs{p2.name()}"] = \
-            tester.play_1v1(p1, p2, nb_games=nb_games, dic_win_lose_type=dic_win_lose_type)
+        victories_number, dic_global_win_lose_type[f"{p1.name()}vs{p2.name()}"] = (
+            tester.play_1v1(
+                p1, p2, nb_games=nb_games, dic_win_lose_type=dic_win_lose_type
+            )
+        )
 
         results[player1_name][player2_name] = victories_number[player1_name]
 

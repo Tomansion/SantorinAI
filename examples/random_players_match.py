@@ -1,5 +1,6 @@
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 
 from santorinai.tester import Tester
 from santorinai.player_examples.random_player import RandomPlayer

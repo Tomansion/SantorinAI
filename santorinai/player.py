@@ -9,6 +9,7 @@ class Player:
     """
     A player of Santorini, has a name and can play a move given a board
     """
+
     def __init__(self, player_number: int, log_level=0) -> None:
         self.log_level = log_level
         self.player_number = player_number
@@ -34,9 +35,7 @@ class Player:
         pass
 
     @abstractmethod
-    def play_move(
-        self, board: Board
-    ) -> Tuple[int, Tuple[int, int], Tuple[int, int]]:
+    def play_move(self, board: Board) -> Tuple[int, Tuple[int, int], Tuple[int, int]]:
         """
         Choose a pawn and play a move given a board
         :param board: the board

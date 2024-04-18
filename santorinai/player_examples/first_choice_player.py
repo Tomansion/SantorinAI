@@ -7,6 +7,7 @@ class FirstChoicePlayer(Player):
     """
     A player that places his pawns and moves them at the first possible position
     """
+
     def __init__(self, player_number, log_level=0) -> None:
         super().__init__(player_number, log_level)
 

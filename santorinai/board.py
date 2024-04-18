@@ -362,7 +362,10 @@ class Board:
         return True, "The pawn was placed."
 
     def play_move(
-        self, pawn_number:int, move_position: Tuple[int, int], build_position: Tuple[int, int]
+        self,
+        pawn_number: int,
+        move_position: Tuple[int, int],
+        build_position: Tuple[int, int],
     ) -> Tuple[bool, str]:
         """
         Plays a move on the board with the chosen playing pawn.
