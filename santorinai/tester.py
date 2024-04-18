@@ -43,16 +43,16 @@ class Tester:
         """
         NB_PLAYERS = 2
 
-        nb_victories = [0, 0]
-        # Initialize empty dic_win_lose_type in not passed
-        if not dic_win_lose_type:
-            dic_win_lose_type = {player1.name(): {}, player2.name(): {}}
-
         # Check if the players are objects of the Player class
         if player1 is None or not isinstance(player1, Player):
             raise TypeError("player1 should be an object of the Player class")
         if player2 is None or not isinstance(player2, Player):
             raise TypeError("player2 should be an object of the Player class")
+
+        nb_victories = [0, 0]
+        # Initialize empty dic_win_lose_type in not passed
+        if not dic_win_lose_type:
+            dic_win_lose_type = {player1.name(): {}, player2.name(): {}}
 
         players = [player1, player2]
 
@@ -173,7 +173,7 @@ class Tester:
                     )
                 )
 
-            nb_victories[winner_number - 1] += 1
+                nb_victories[winner_number - 1] += 1
 
         # Display the results
         print("\nResults:")
