@@ -222,3 +222,12 @@ update_board(window, board)
 Creator of Santorini: [Roxley Games](https://roxley.com/)
 
 Board 2D Gui library: [PySimpleGUI](https://www.pysimplegui.org/en/latest/)
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
+
+## Contributors
+
+- [Tomansion](http://github.com/tomansion)
+- [daniPclos](https://github.com/daniPclos) (Implementation of the pawn selection on move feature)
