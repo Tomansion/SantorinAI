@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append("..")
-
 from santorinai.tester import Tester
 from santorinai.player_examples.random_player import RandomPlayer
 from santorinai.player_examples.first_choice_player import FirstChoicePlayer
@@ -18,7 +14,13 @@ players_classes = [
 
 # Init the tester
 tester = Tester()
-tester.verbose_level = 0  # 0: no output, 1: Each game results, 2: Each move results# tester.delay_between_moves = 0.5  # Delay between each move in seconds
+tester.verbose_level = 0
+# Verbose level:
+# 0: no output,
+# 1: Each game results
+# 2: Each move results
+
+# tester.delay_between_moves = 0.5  # Delay between each move in seconds
 # tester.display_board = True  # Display a graphical view of the board in a window
 
 nb_games = 1000

@@ -42,7 +42,6 @@ class Tester:
             player2 (Player): the second player
         """
         NB_PLAYERS = 2
-        NB_PAWNS = NB_PLAYERS * 2
 
         nb_victories = [0, 0]
         # Initialize empty dic_win_lose_type in not passed

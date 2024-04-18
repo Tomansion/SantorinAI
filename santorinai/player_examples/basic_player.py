@@ -1,4 +1,3 @@
-import copy
 from santorinai.player import Player
 from santorinai.board import Board
 from santorinai.pawn import Pawn
