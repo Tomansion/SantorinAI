@@ -10,7 +10,6 @@ class Board:
         pawns (list): A list of pawn objects representing the pawns on the board.
         board_size (int): The size of the square game board.
         board (list): A 2D list representing the current state of the board.
-        pawn_turn (int): The index of the current player's turn.
         turn_number (int): The current turn number.
         winner_player_number (int): The player number of the winning player, if any.
 
@@ -51,7 +50,8 @@ class Board:
 
         for pawn_number in range(1, self.nb_pawns + 1):
             player_number = (pawn_number - 1) % number_of_players + 1
-            self.pawns.append(Pawn(pawn_number, player_number))
+            pawn_order = (pawn_number - 1) // number_of_players + 1  # 1 or 2
+            self.pawns.append(Pawn(pawn_number, pawn_order, player_number))
 
         # Initialize the board
         self.board_size = 5
@@ -67,9 +67,9 @@ class Board:
         # 4 = terminated tower
 
         # Other board values:
-        self.pawn_turn = 1
         self.winner_player_number = None
         self.turn_number = 1
+        self.player_turn = 1
 
     def is_move_possible(
         self, start_pos: Tuple[int, int], end_pos: Tuple[int, int]
@@ -203,14 +203,71 @@ class Board:
 
         return True, "The build is possible."
 
-    def get_playing_pawn(self) -> Pawn:
+    def get_player_pawns(self, player_number: int) -> List[Pawn]:
         """
-        Gets the pawn of the current player.
+        Gets the pawns of a player.
+
+        Args:
+            player_number (int): The number of the player
 
         Returns:
             Pawn: The pawn of the current player.
         """
-        return self.pawns[self.pawn_turn - 1]
+        pawns = []
+        for pawn in self.pawns:
+            if pawn.player_number == player_number:
+                pawns.append(pawn)
+
+        return pawns
+
+    def get_player_pawn(self, player_number: int, pawn_number: int) -> Pawn:
+        """
+        Gets a pawn of a player.
+
+        Args:
+            player_number (int): The number of the player
+            pawn_number (int): The number of the pawn to retrieve, 1 or 2.
+
+        Returns:
+            Pawn: The pawn of the current player.
+        """
+
+        return self.get_player_pawns(player_number)[pawn_number - 1]
+
+    def get_playing_pawn(self, pawn_number: int) -> Pawn:
+        """
+        Gets the pawns of the current player.
+
+        Args:
+            pawn_number int: The number of pawns to retrieve, 1 or 2.
+
+        Returns:
+            Pawn: The selected pawn of the playing player,
+            None if the given pawn number is invalid.
+        """
+
+        # Validate the input
+        if pawn_number < 1 or pawn_number > 2:
+            return None
+
+        # Get the playing pawn
+        return self.get_player_pawns(self.player_turn)[pawn_number - 1]
+
+    def get_first_unplaced_player_pawn(self, player_number: int) -> Pawn:
+        """
+        Gets the first unplaced pawn of a player.
+
+        Args:
+            player_number (int): The player number.
+
+        Returns:
+            Pawn: The first unplaced pawn of the player.
+        """
+        for pawn in self.pawns:
+            if pawn.player_number == player_number and (
+                pawn.pos[0] is None or pawn.pos[1] is None
+            ):
+                return pawn
 
     def get_possible_movement_positions(self, pawn: Pawn) -> List[Tuple[int, int]]:
         """
@@ -323,8 +380,9 @@ class Board:
             return False, "The game is over."
 
         # Check if the pawn has already been placed
-        if self.get_playing_pawn().pos != (None, None):
-            return False, "The pawn has already been placed."
+        unplaced_pawns = self.get_first_unplaced_player_pawn(self.player_turn)
+        if unplaced_pawns is None:
+            return False, "All the pawns have already been placed."
 
         # Check input
         ok, msg = self.is_position_valid(position)
@@ -335,11 +393,8 @@ class Board:
         if self.is_pawn_on_position(position):
             return False, "The position is already occupied by another pawn."
 
-        # Get the pawn of the current player
-        pawn = self.get_playing_pawn()
-
         # Place the pawn
-        pawn.pos = position
+        unplaced_pawns.pos = position
 
         # Next player's turn
         self.next_turn()
@@ -347,12 +402,16 @@ class Board:
         return True, "The pawn was placed."
 
     def play_move(
-        self, move_position: Tuple[int, int], build_position: Tuple[int, int]
+        self,
+        pawn_number: int,
+        move_position: Tuple[int, int],
+        build_position: Tuple[int, int],
     ) -> Tuple[bool, str]:
         """
-        Plays a move on the board with the current playing pawn.
+        Plays a move on the board with the chosen playing pawn.
 
         Args:
+            pawn_number (int): Number of the pawn to play with (1 or 2).
             move_position (tuple): The position (x, y) to move the pawn to.
             build_position (tuple): The position (x, y) to build a tower on.
 
@@ -360,22 +419,31 @@ class Board:
             bool: True if the move was played, False otherwise.
             str: A string describing why the move was not played.
         """
+
+        # Validate the input
+        if not isinstance(pawn_number, int):
+            return False, "The pawn number is not an integer."
+
+        if pawn_number < 1 or pawn_number > 2:
+            return False, "The pawn number is invalid (must be 1 or 2)."
+
+        # Check if all pawn are placed
+        unplaced_pawns = self.get_first_unplaced_player_pawn(self.player_turn)
+        if unplaced_pawns is not None:
+            return False, "All the pawns have not been placed yet."
+
+        # Get the moving pawn
+        pawn = self.get_playing_pawn(pawn_number)
+
         # Check if the game is over
         if self.is_game_over():
             return False, "The game is over."
 
-        # Get the pawn of the current player
-        pawn = self.get_playing_pawn()
-
-        # Check if the pawn has been placed
-        if pawn.pos[0] is None or pawn.pos[1] is None:
-            return False, "The pawn has not been placed yet."
-
         # Check if there is any possible move
         possible_moves = self.get_possible_movement_positions(pawn)
         if len(possible_moves) == 0:
-            self.next_turn()
-            return True, "There is no possible move to play, the pawn is stuck."
+            # The selected pawn is stuck
+            return False, "The selected pawn is stuck."
 
         # === MOVE ===
         # Check the input
@@ -385,7 +453,6 @@ class Board:
 
         # Check if the move is possible
         move_possible, reason = self.is_move_possible(pawn.pos, move_position)
-
         if not move_possible:
             return False, reason
 
@@ -396,7 +463,7 @@ class Board:
         # Check if the tower is terminated
         if self.board[pawn.pos[0]][pawn.pos[1]] == 3:
             self.winner_player_number = pawn.player_number
-            return True, "The move was played and the game is over."
+            return True, "The player pawn reached the top of a tower."
 
         # === BUILD ===
         # Check the input
@@ -427,6 +494,18 @@ class Board:
 
         # Change the turn
         self.next_turn()
+
+        # Check if the next player is stuck
+        next_player_pawns = self.get_player_pawns(self.player_turn)
+        next_player_stuck = True
+        for p in next_player_pawns:
+            if len(self.get_possible_movement_positions(p)) > 0:
+                next_player_stuck = False
+                break
+
+        if next_player_stuck:
+            self.winner_player_number = pawn.player_number
+            return True, "The next player is stuck, the game is over."
 
         return True, "The move was played."
 
@@ -491,9 +570,9 @@ class Board:
         """
         Changes the turn.
         """
-        self.pawn_turn += 1
-        if self.pawn_turn > self.nb_pawns:
-            self.pawn_turn = 1
+        self.player_turn += 1
+        if self.player_turn > self.nb_players:
+            self.player_turn = 1
 
         self.turn_number += 1
 
@@ -516,7 +595,6 @@ class Board:
         board_copy.pawns = [pawn.copy() for pawn in self.pawns]
 
         # Copy the other attributes
-        board_copy.pawn_turn = self.pawn_turn
         board_copy.turn_number = self.turn_number
         board_copy.winner_player_number = self.winner_player_number
 

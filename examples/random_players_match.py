@@ -1,9 +1,7 @@
-import sys
-sys.path.append('..')
-
 from santorinai.tester import Tester
 from santorinai.player_examples.random_player import RandomPlayer
 from santorinai.player_examples.first_choice_player import FirstChoicePlayer
+from santorinai.player_examples.basic_player import BasicPlayer
 
 # Init the tester
 tester = Tester()
@@ -12,8 +10,9 @@ tester.delay_between_moves = 0.5  # Delay between each move in seconds
 tester.display_board = True  # Display a graphical view of the board in a window
 
 # Init the players
-my_player = FirstChoicePlayer()
-random_payer = RandomPlayer()
+my_player = FirstChoicePlayer(1)
+basic_player = BasicPlayer(1)
+random_payer = RandomPlayer(2)
 
 # Play 100 games
-tester.play_1v1(my_player, random_payer, nb_games=100)
+tester.play_1v1(basic_player, random_payer, nb_games=100)

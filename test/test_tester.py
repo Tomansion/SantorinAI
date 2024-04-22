@@ -19,6 +19,6 @@ class TestTester(unittest.TestCase):
         tester.verbose_level = 0
         tester.display_board = False
 
-        player1 = RandomPlayer()
-        player2 = FirstChoicePlayer()
+        player1 = RandomPlayer(2)
+        player2 = FirstChoicePlayer(2)
         tester.play_1v1(player1, player2, nb_games=10)

@@ -10,6 +10,10 @@ class Player:
     A player of Santorini, has a name and can play a move given a board
     """
 
+    def __init__(self, player_number: int, log_level=0) -> None:
+        self.log_level = log_level
+        self.player_number = player_number
+
     @abstractmethod
     def name(self):
         """
@@ -31,13 +35,10 @@ class Player:
         pass
 
     @abstractmethod
-    def play_move(
-        self, board: Board, pawn: Pawn
-    ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    def play_move(self, board: Board) -> Tuple[int, Tuple[int, int], Tuple[int, int]]:
         """
-        Play a move given a board
+        Choose a pawn and play a move given a board
         :param board: the board
-        :param pawn: the pawn that needs to be moved and that needs to build
         :return: two positions of the form (x1, y1), (x2, y2)
 
         The first coordinate corresponds to the new position of the pawn
