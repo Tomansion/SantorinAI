@@ -8,3 +8,6 @@ build/
 
 .idea/
 .venv/
+
+# Training experiment outputs
+runs/

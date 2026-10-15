@@ -88,7 +88,8 @@ returns one of the legal moves:
 ```python
 import random
 
-from santorinai import Agent, GameState
+from santorinai import GameState
+from santorinai.agents import Agent
 
 
 class MyAgent(Agent):
@@ -129,6 +130,26 @@ obs, reward, terminated, truncated, info = env.step(env.action_masks().argmax())
 
 The legal moves are in `env.action_masks()`, which is what sb3-contrib's
 `MaskablePPO` expects.
+
+### Training loops and opponent leagues
+
+The `santorinai.training` package collects complete episodes, updates only the
+enabled learning seats, and tracks progress through callbacks. It uses the
+same `select_action(state)` interface as the engine and baseline agents.
+
+```bash
+uv run python -m examples.train_dummy_agents --episodes 10
+uv run python -m examples.train_dummy_league --episodes 12
+```
+
+The league example samples baseline agents and saved copies of the learner,
+alternates the learner's seat, saves checkpoints, and runs balanced round-robin
+tournaments without updating participants. JSONL logs include matchups, update
+metrics, checkpoints and tournament results.
+
+See [the training guide](documentation/training.md) for configuration, callback hooks and
+checkpoint contracts. The dummy agent demonstrates the infrastructure without
+learning; PPO, neural MCTS/AlphaZero and GAN agents remain future work.
 
 ## Examples
 
